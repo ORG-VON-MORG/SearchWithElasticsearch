@@ -29,7 +29,7 @@ public class SearchWithHighLevelClient {
     public static void main(String args[]){
 
         SearchWithHighLevelClient searchClient = new SearchWithHighLevelClient();
-        //searchClient.getDocumentByID("z-wemGMB4VpJCKChc3eB");
+        searchClient.getDocumentByID("z-wemGMB4VpJCKChc3eB");
         try {
             searchClient.searchAuthorWithProfiling("Evan Soltas");
         } catch (IOException e) {
@@ -59,6 +59,10 @@ public class SearchWithHighLevelClient {
                 String sourceAsString = getResponse.getSourceAsString();
                 Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
                 byte[] sourceAsBytes = getResponse.getSourceAsBytes();
+
+                System.out.println(sourceAsMap.get("contents").toString());
+
+
             } else {
                 System.out.println("Dokument existiert nicht");
             }
@@ -209,6 +213,17 @@ public class SearchWithHighLevelClient {
         boolean succeeded = clearScrollResponse.isSucceeded();
 
         System.out.println("test");
+
+
+        client.close();
+
+    }
+
+
+    public void getAllArticleByDate(){
+        RestHighLevelClient client = new RestHighLevelClient(
+                RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")));
+
 
     }
 }
