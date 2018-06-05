@@ -11,11 +11,30 @@ public class SearchClient {
 
     private RestHighLevelClient client;
     private String index;
+    private String ipAdresse;
+    private int port;
+
+
+
 
 
     public SearchClient(String ipAdresse, int port, String index) {
+        this.ipAdresse = ipAdresse;
+        this.port = port;
+        this.index = index;
+
+        connectionClient(ipAdresse,port);
+
+    }
+
+    public SearchClient(){
+        this("localhost", 9200,"last");
+
+
+    }
+
+    private void connectionClient(String ipAdresse, int port){
         client = new RestHighLevelClient(RestClient.builder(new HttpHost(ipAdresse, port, "http")));
-        this.index=index;
     }
 
 
