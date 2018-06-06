@@ -29,6 +29,13 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
 public class SearchWithHighLevelClient {
 
+    RestHighLevelClient client = new RestHighLevelClient(
+            RestClient.builder(new HttpHost("localhost", 9200, "http")));
+
+
+
+
+
     public static void main(String args[]){
 
        SearchWithHighLevelClient searchClient = new SearchWithHighLevelClient();
@@ -40,7 +47,7 @@ public class SearchWithHighLevelClient {
             e.printStackTrace();
         }
 
-        searchClient.getAllArticleByDate();
+        searchClient.getArticleByDate();
 
         //searchClient.getAllArticle();
 
@@ -50,8 +57,6 @@ public class SearchWithHighLevelClient {
     }
 
     public void getDocumentByID(String idOfDocument){
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost("localhost", 9200, "http")));
 
         GetRequest getRequest = new GetRequest("last", "_doc", idOfDocument);
         try {
@@ -81,10 +86,6 @@ public class SearchWithHighLevelClient {
     }
 
     public void searchAuthorWithProfiling(String author) throws IOException {
-
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost("localhost", 9200, "http")));
-
 
 
         //Search Request
@@ -150,21 +151,13 @@ public class SearchWithHighLevelClient {
 
         }
 
-    public void searchAuthor(String author) throws IOException{
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")));
-
-
-
-    }
 
 
 
 
     public void getAllArticle(){
 
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")));
+
 
         SearchRequest searchRequest = new SearchRequest();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -189,8 +182,6 @@ public class SearchWithHighLevelClient {
 
     public void getAllArticleSearchScroll() throws IOException {
 
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")));
 
 
         final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
@@ -226,14 +217,12 @@ public class SearchWithHighLevelClient {
     }
 
 
-    public void getAllArticleByDate(){
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost("localhost", 9200, "http")));
+    public void getArticleByDate(){
+
 
         SearchRequest searchRequest = new SearchRequest();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-        //sourceBuilder.query(matchQuery("author", author));
 
         searchSourceBuilder.query(matchAllQuery());
         //searchSourceBuilder.query(rangeQuery("published_date").from(1514807916000L).to(1517270400000L));
@@ -247,6 +236,20 @@ public class SearchWithHighLevelClient {
             e.printStackTrace();
         }
 
+    }
+
+    public void searchArticleContent(String text){
+        SearchRequest searchRequest = new SearchRequest();
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(matchQuery("contents", text));
+        
+
+
+
+
 
     }
+
+
 }
