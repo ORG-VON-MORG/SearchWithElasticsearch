@@ -1,3 +1,5 @@
+package TestKlassenFuerQueries;
+
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -5,22 +7,16 @@ import org.elasticsearch.action.search.*;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.profile.ProfileShardResult;
-import org.elasticsearch.search.profile.query.QueryProfileShardResult;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -41,7 +37,8 @@ public class SearchWithHighLevelClient {
 
         try {
            // searchClient.searchAuthorWithProfiling("Evan Soltas");
-            searchClient.searchArticleContent("Gottschalk");
+           // searchClient.searchArticleContent("Gottschalk");
+            searchClient.getArticelByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +52,7 @@ public class SearchWithHighLevelClient {
 
     }
 
-    public void getDocumentByID(String idOfDocument){
+    public Map getDocumentByID(String idOfDocument){
 
         GetRequest getRequest = new GetRequest("last", "_doc", idOfDocument);
         try {
@@ -73,14 +70,13 @@ public class SearchWithHighLevelClient {
 
                 System.out.println(sourceAsMap.get("contents").toString());
 
-
-            } else {
-                System.out.println("Dokument existiert nicht");
+                return sourceAsMap;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        return null;
 
     }
 
@@ -256,12 +252,27 @@ public class SearchWithHighLevelClient {
 
 
 
+    }
 
-        
+    public Map getArticelByWPID(String artikelID) throws IOException {
+        SearchRequest searchRequest = new SearchRequest("last");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        //searchSourceBuilder.query(termQuery("id",ArtikelID));
 
 
 
+        searchSourceBuilder.query(matchQuery("id",artikelID).operator(Operator.AND));
 
+
+        searchRequest.source(searchSourceBuilder);
+
+        SearchResponse searchResponse = client.search(searchRequest);
+
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+
+        String documentID = searchHits[0].getId();
+
+         return getDocumentByID(documentID);
 
     }
 
