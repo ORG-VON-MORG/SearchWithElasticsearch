@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 
 public class SearchWithHighLevelClient {
@@ -42,12 +40,13 @@ public class SearchWithHighLevelClient {
         //searchClient.getDocumentByID("j6qkx2MBKRrm5z8MDDOZ");
 
         try {
-            searchClient.searchAuthorWithProfiling("Evan Soltas");
+           // searchClient.searchAuthorWithProfiling("Evan Soltas");
+            searchClient.searchArticleContent("Gottschalk");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        searchClient.getArticleByDate();
+      //  searchClient.getArticleByDate();
 
         //searchClient.getAllArticle();
 
@@ -94,8 +93,11 @@ public class SearchWithHighLevelClient {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
         //sourceBuilder.query(QueryBuilders.termQuery("author", "Max Fischer"));
-        sourceBuilder.query(matchQuery("author", author));
+        //sourceBuilder.query(matchQuery("author", author));
 
+
+        //TODO Test ob es mit Term Query funktioniert
+        sourceBuilder.query(termQuery("author", author));
 
         //sourceBuilder.from(0);
         //sourceBuilder.size(5);
@@ -238,11 +240,23 @@ public class SearchWithHighLevelClient {
 
     }
 
-    public void searchArticleContent(String text){
-        SearchRequest searchRequest = new SearchRequest();
+    public void searchArticleContent(String text) throws IOException {
+        SearchRequest searchRequest = new SearchRequest("last");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-        searchSourceBuilder.query(matchQuery("contents", text));
+        //searchSourceBuilder.query(matchQuery("contents", text));
+        searchSourceBuilder.query(matchQuery("contents.contentString",text));
+
+        searchRequest.source(searchSourceBuilder);
+
+        SearchResponse searchResponse = client.search(searchRequest);
+
+
+        System.out.println("ttest");
+
+
+
+
         
 
 
