@@ -38,7 +38,8 @@ public class SearchWithHighLevelClient {
         try {
            // searchClient.searchAuthorWithProfiling("Evan Soltas");
            // searchClient.searchArticleContent("Gottschalk");
-            searchClient.getArticelByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
+            //searchClient.getArticelByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
+            searchClient.getAllRelevant("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,6 +49,7 @@ public class SearchWithHighLevelClient {
         //searchClient.getAllArticle();
 
         // searchClient.getAllArticleSearchScroll();
+
 
 
     }
@@ -149,10 +151,6 @@ public class SearchWithHighLevelClient {
 
         }
 
-
-
-
-
     public void getAllArticle(){
 
 
@@ -214,7 +212,6 @@ public class SearchWithHighLevelClient {
 
     }
 
-
     public void getArticleByDate(){
 
 
@@ -225,6 +222,8 @@ public class SearchWithHighLevelClient {
         searchSourceBuilder.query(matchAllQuery());
         //searchSourceBuilder.query(rangeQuery("published_date").from(1514807916000L).to(1517270400000L));
         searchSourceBuilder.query(rangeQuery("published_date").lte("1514807916000"));
+
+
 
         searchRequest.source(searchSourceBuilder);
         try {
@@ -272,9 +271,58 @@ public class SearchWithHighLevelClient {
 
         String documentID = searchHits[0].getId();
 
+
          return getDocumentByID(documentID);
 
     }
+
+
+    public void getAllRelevant(String artikelID) throws IOException {
+        Map artikelMap = getArticelByWPID(artikelID);
+
+        String title = (String)artikelMap.get("title");
+
+        Long published_date = (Long) artikelMap.get("published_date");
+
+
+        searchArticleContent(title);
+
+        SearchRequest searchRequest = new SearchRequest();
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(matchQuery("contents.contentString",title));
+        searchSourceBuilder.query(rangeQuery("published_date").lte(published_date.toString()));
+        searchRequest.source(searchSourceBuilder);
+
+        SearchResponse searchResponse = client.search(searchRequest);
+
+
+
+
+
+
+
+
+        System.out.println("test");
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+    private Map convertSearchHitsIntoMapWithAllArticles(SearchHit[] searchHits){
+
+
+        return null;
+    }
+
+
 
 
 }
