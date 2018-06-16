@@ -16,8 +16,17 @@ public class BaselineSuche {
         }
 
 
+
+        String title = map.get("title").toString();
+
+
+        //CORE NLP
+
+        
+
+
+
         System.out.println("test");
-        //String title = map.get("title");
 
     }
 }
