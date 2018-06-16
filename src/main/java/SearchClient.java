@@ -105,13 +105,13 @@ public class SearchClient {
 
     }
 
-    public void searchArticleByStringAndDate(String searchText, Long date) throws IOException {
+    public Map searchArticleByStringAndDate(String searchText, Long publishedDate) throws IOException {
 
         HashMap<String,Map> map= new HashMap<String,Map>();
 
         QueryBuilder query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.AND))
-                .must(QueryBuilders.rangeQuery("published_date").lt(date));
+                .must(QueryBuilders.rangeQuery("published_date").lt(publishedDate));
 
 
 
@@ -127,6 +127,8 @@ public class SearchClient {
 
             map.put(idDocument,getDocumentByID(idDocument));
         }
+
+        return map;
 
     }
 
@@ -192,7 +194,7 @@ public class SearchClient {
     /**
      * Schliesst und beendet die Verbindung
      */
-    public void CloseClient() throws IOException {
+    public void closeClient() throws IOException {
         client.close();
 
 

@@ -9,15 +9,19 @@ public class BaselineSuche {
 
     public static void main (String[] args){
 
+        Map mapWithAllRelevantArticle;
+        Long published_date;
+        Map map = null;
         SearchClient searchClient = new SearchClient();
 
-        Map map = null;
 
         try {
             map = searchClient.getArticelByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        published_date = (Long) map.get("published_date");
 
 
 
@@ -41,16 +45,20 @@ public class BaselineSuche {
         System.out.println(titleEntities);
         //-------miblau-----------
 
+        try {
+            mapWithAllRelevantArticle= searchClient.searchArticleByStringAndDate(titleEntities,published_date);
+
+            System.out.println("test");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
 
-        //CORE NLP
-
-
-
-
-
-        System.out.println("test");
-
+        try {
+            searchClient.closeClient();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
