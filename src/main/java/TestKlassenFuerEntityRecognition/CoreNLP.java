@@ -33,12 +33,15 @@ public class CoreNLP {
 
 
     public void ersteZeileZuJSON(String dateiname)throws java.io.FileNotFoundException, java.io.IOException{
+
         File datei = new File(dateiname).getCanonicalFile();
         Scanner input = new Scanner(datei);
         input.useDelimiter("\\n");
         check (!datei.isFile() || !datei.canRead(), DATEI_FALSCH);
 
         String ersteZeile = input.next();
+        ersteZeile = input.next();
+        ersteZeile = input.next();
         System.out.println(ersteZeile);
 
         JSONObject einZeitungsartikel = new JSONObject(ersteZeile);
@@ -48,12 +51,19 @@ public class CoreNLP {
 
         for (int i = 0; i < contentsArray.length(); i++){
             objektAusContentsArray = contentsArray.getJSONObject(i);
+
             if (objektAusContentsArray.has("contentString")){
-                System.out.println(objektAusContentsArray.get("contentString"));
+                String saetze = objektAusContentsArray.get("contentString").toString();
+                Document doc = new Document(saetze);
+
+                for (Sentence sent : doc.sentences()) {
+                    System.out.println("NER tags of the sentence in \"contentString\" nr: " + i +"-->" + sent.nerTags());
+                    // ...
+                    System.out.println("mentions of the sentence in \"contentString\" nr: " + i +"-->" +  sent.mentions());
+                    System.out.println("");
+                }
             }
         }
-
-
     }
 
     private void check (boolean bedingung, String msg) {
@@ -61,6 +71,7 @@ public class CoreNLP {
             throw new RuntimeException(msg);
         }
     }
+
 
     public static void beispielMethodeCoreNLP (){
         // Create a document. No computation is done yet.
