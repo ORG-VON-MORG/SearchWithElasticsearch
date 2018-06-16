@@ -6,10 +6,14 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -101,9 +105,84 @@ public class SearchClient {
 
     }
 
+    public void searchArticleByStringAndDate(String searchText, Long date) throws IOException {
+
+        HashMap<String,Map> map= new HashMap<String,Map>();
+
+        QueryBuilder query = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.AND))
+                .must(QueryBuilders.rangeQuery("published_date").lt(date));
 
 
 
+        SearchResponse searchResponse = getSearchResultFromResponse(query);
+
+
+        SearchHits hits = searchResponse.getHits();
+
+        SearchHit[] searchHits = hits.getHits();
+
+        for (SearchHit hit : searchHits) {
+            String idDocument= hit.getId();
+
+            map.put(idDocument,getDocumentByID(idDocument));
+        }
+
+    }
+
+    /**
+     * Methode nimmt ein QueryBuilder Objekt an und führt die Suche aus.
+     * @param query Nimmt eine Objekt vom Typ QueryBuidler entgegen
+     * @return Gibt ein SearchResponse mit den ensprechenden Hits zurueck
+     */
+    private SearchResponse getSearchResultFromResponse(QueryBuilder query){
+        SearchRequest searchRequest = new SearchRequest();
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(query);
+
+        searchRequest.source(searchSourceBuilder);
+
+        try {
+            SearchResponse searchResponse = client.search(searchRequest);
+
+            return searchResponse;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+
+    public Map getDocumentByID(String idOfDocument){
+
+        GetRequest getRequest = new GetRequest("last", "_doc", idOfDocument);
+        try {
+            GetResponse getResponse = client.get(getRequest);
+
+            //String index = getResponse.getIndex();
+            //String type = getResponse.getType();
+            //String id = getResponse.getId();
+
+            if (getResponse.isExists()) {
+                long version = getResponse.getVersion();
+                String sourceAsString = getResponse.getSourceAsString();
+                Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
+                byte[] sourceAsBytes = getResponse.getSourceAsBytes();
+
+                System.out.println(sourceAsMap.get("contents").toString());
+
+                return sourceAsMap;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
 
 
 
