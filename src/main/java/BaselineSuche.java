@@ -55,6 +55,7 @@ public class BaselineSuche {
 
 
 
+
         try {
             searchClient.closeClient();
         } catch (IOException e) {

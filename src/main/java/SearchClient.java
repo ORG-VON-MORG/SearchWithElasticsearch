@@ -110,8 +110,10 @@ public class SearchClient {
         HashMap<String,Map> map= new HashMap<String,Map>();
 
         QueryBuilder query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.AND))
+                .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.OR))
                 .must(QueryBuilders.rangeQuery("published_date").lt(publishedDate));
+    
+
 
 
 
