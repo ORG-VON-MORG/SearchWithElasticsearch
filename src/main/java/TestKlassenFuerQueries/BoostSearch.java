@@ -2,28 +2,70 @@ package TestKlassenFuerQueries;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.collect.HppcMaps;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static TestKlassenFuerQueries.SearchWithLowLevelAPI.showTerms;
+
 public class BoostSearch {
 
-    RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
-    SearchRequest searchRequest = new SearchRequest();
 
-    SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-    QueryBuilder query = QueryBuilders.boolQuery()
-            .must(QueryBuilders.matchQuery("contents.contentString",title).boost(3))//operator(Operator.AND))
-            .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
 
-       public void check(HashMap<String, int> artikel) {
-           for (Map.Entry<String, HppcMaps.Object.Integer> entry : map.entrySet()) {
-               System.out.println(entry.getKey() + "/" + entry.getValue());
+    public static void main(String[] args){
+            new BoostSearch().start();
+    }
+
+
+    public void start() {
+
+        HashMap<String,Integer> map = showTerms("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
+
+        this.getArticlesByBoostSearch(map,1374190070000L);
+
+    }
+
+       public void getArticlesByBoostSearch(HashMap<String, Integer> artikel, Long published_date) {
+           RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
+           SearchRequest searchRequest = new SearchRequest();
+
+           SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+           final QueryBuilder query = QueryBuilders.boolQuery()
+                  // .must(QueryBuilders.matchQuery("contents.contentString",title).boost(3))//operator(Operator.AND))
+                   .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
+
+
+
+           //artikel.forEach((k,v)->((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString", k).boost(v)));
+
+           artikel.
+
+           for (Map.Entry<String, Integer> entry : artikel.entrySet()) {
+
+               ((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString",entry.getKey())
+                       .boost(entry.getValue())
+                       .operator(Operator.AND));
+
            }
+
+           try {
+               SearchResponse searchResponse = client.search(searchRequest);
+               System.out.println("test");
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+
+
        }
 
 
