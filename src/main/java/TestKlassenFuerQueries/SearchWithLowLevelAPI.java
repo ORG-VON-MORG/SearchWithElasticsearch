@@ -13,7 +13,12 @@ import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import org.json.JSONObject;
+import org.json.*;
+
 
 public class SearchWithLowLevelAPI {
 
@@ -22,7 +27,8 @@ public class SearchWithLowLevelAPI {
 
        //getFirstResponse();
        //IndexStatus();
-       searchAuthor("Max Fischer");
+       //searchAuthor("Max Fischer");
+       showTerms("C7BVyGMBKRrm5z8MDDI8");
    }
 
    public static void getFirstResponse(){
@@ -116,5 +122,45 @@ public class SearchWithLowLevelAPI {
            e.printStackTrace();
        }
    }
+
+   public static HashMap<String, Integer> showTerms(String id){
+       RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+       Map<String, String> params = Collections.emptyMap();
+       String json = "{ \"ids\" : [\"" + id +"\"], \"parameters\": { \"fields\": [\"contents.contentString\"], \"term_statistics\": true, \"offsets\":false, \"payloads\":false, \"positions\":false } }";
+       HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+       HashMap<String, Integer> wordFreq = new HashMap<String, Integer>();
+       try{
+           Response rsp = rc.performRequest("GET", "last/_doc/_mtermvectors?pretty", params, entity);
+           String responsebody = EntityUtils.toString(rsp.getEntity());
+           JSONObject terms = new JSONObject(responsebody)
+                                    .getJSONArray("docs")
+                                    .getJSONObject(0)
+                                    .getJSONObject("term_vectors")
+                                    .getJSONObject("contents.contentString")
+                                    .getJSONObject("terms");
+           System.out.println(terms);
+
+           Iterator keys = terms.keys();
+           while (keys.hasNext()){
+               String key = (String)keys.next();
+               JSONObject word = terms.getJSONObject(key);
+               Integer freq = word.getInt("ttf");
+               wordFreq.put(key, freq);
+           }
+           for( String st : wordFreq.keySet()) {
+               System.out.println(st + ": " + wordFreq.get(st));
+           }
+
+
+
+
+
+       } catch (IOException e){
+           e.printStackTrace();
+       }
+       return wordFreq;
+   }
+
+
 
 }
