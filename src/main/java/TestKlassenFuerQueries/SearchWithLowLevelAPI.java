@@ -126,7 +126,13 @@ public class SearchWithLowLevelAPI {
    public static HashMap<String, Integer> showTerms(String id, String field){
        RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
        Map<String, String> params = Collections.emptyMap();
-       String json = "{ \"ids\" : [\"" + id +"\"], \"parameters\": { \"fields\": [\""+ field +"\"], \"term_statistics\": true, \"offsets\":false, \"payloads\":false, \"positions\":false } }";
+       String json = "{  \"ids\" : [\"" + id +"\"], " +
+                        "\"parameters\": { " +
+                            "\"fields\": [\""+ field +"\"], " +
+                            "\"term_statistics\": true, " +
+                            "\"offsets\":false, " +
+                            "\"payloads\":false, " +
+                            "\"positions\":false } }";
        HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
        HashMap<String, Integer> wordFreq = new HashMap<String, Integer>();
        try{
