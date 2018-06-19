@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static TestKlassenFuerQueries.SearchWithLowLevelAPI.showTerms;
+import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
 
 public class BoostSearch {
 
@@ -29,13 +29,12 @@ public class BoostSearch {
 
     public void start() {
 
-        HashMap<String,Integer> map = showTerms("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
-
+        HashMap<String,int[]> map = getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
         this.getArticlesByBoostSearch(map,1374190070000L);
 
     }
 
-       public void getArticlesByBoostSearch(HashMap<String, Integer> artikel, Long published_date) {
+       public void getArticlesByBoostSearch(HashMap<String, int[]> artikel, Long published_date) {
            RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
            SearchRequest searchRequest = new SearchRequest();
 
@@ -49,10 +48,10 @@ public class BoostSearch {
            //artikel.forEach((k,v)->((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString", k).boost(v)));
 
 
-           for (Map.Entry<String, Integer> entry : artikel.entrySet()) {
+           for (Map.Entry<String, int[]> entry : artikel.entrySet()) {
 
                ((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString",entry.getKey())
-                       .boost(entry.getValue())
+                       .boost(entry.getValue()[1])      //0 for doc_freq, 1 for ttf, 2 for term_freq
                        .operator(Operator.AND));
 
            }
