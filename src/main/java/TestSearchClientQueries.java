@@ -30,6 +30,7 @@ public class TestSearchClientQueries{
             System.out.println(map);
 
             try {
+
                 sc.closeClient();
             } catch (IOException e) {
                 e.printStackTrace();
