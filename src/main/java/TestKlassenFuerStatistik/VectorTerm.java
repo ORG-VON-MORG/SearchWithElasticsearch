@@ -10,18 +10,17 @@ import java.io.IOException;
 
 public class VectorTerm {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(new HttpHost("localhost", 9200, "http")));
 
-   //     TermVectorsRequest termVectorsRequest = new TermVectorsRequest("last","_doc","C7BVyGMBKRrm5z8MDDI8");
-     //   termVectorsRequest.fieldStatistics(true);
-       // termVectorsRequest.termStatistics(true);
+        //     TermVectorsRequest termVectorsRequest = new TermVectorsRequest("last","_doc","C7BVyGMBKRrm5z8MDDI8");
+        //   termVectorsRequest.fieldStatistics(true);
+        // termVectorsRequest.termStatistics(true);
 
 
-        TermVectorsResponse termVectorsResponse = new TermVectorsResponse("last","_doc","C7BVyGMBKRrm5z8MDDI8");
-
+        TermVectorsResponse termVectorsResponse = new TermVectorsResponse("last", "_doc", "C7BVyGMBKRrm5z8MDDI8");
 
 
         TermVectorsRequest request = new TermVectorsRequest().index("TWITTER").type("TWEET").id("1")
@@ -31,9 +30,6 @@ public class VectorTerm {
                 .termStatistics(true)
                 .fieldStatistics(true)
                 .selectedFields(new String[]{"text"});
-
-
-
 
 
         try {
@@ -48,7 +44,6 @@ public class VectorTerm {
         System.out.println("twest");
 
 
-
         try {
             client.close();
         } catch (IOException e) {
@@ -56,6 +51,5 @@ public class VectorTerm {
         }
 
     }
-
 
 }

@@ -48,7 +48,6 @@ public class BoostSearch {
 
            //artikel.forEach((k,v)->((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString", k).boost(v)));
 
-           artikel.
 
            for (Map.Entry<String, Integer> entry : artikel.entrySet()) {
 
@@ -60,7 +59,7 @@ public class BoostSearch {
 
            try {
                SearchResponse searchResponse = client.search(searchRequest);
-               System.out.println("test");
+               System.out.println(searchResponse);
            } catch (IOException e) {
                e.printStackTrace();
            }
