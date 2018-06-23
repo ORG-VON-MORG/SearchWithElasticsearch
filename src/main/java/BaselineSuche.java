@@ -16,7 +16,7 @@ public class BaselineSuche {
 
 
         try {
-            map = searchClient.getArticelByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
+            map = searchClient.getArticleByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
         } catch (IOException e) {
             e.printStackTrace();
         }
