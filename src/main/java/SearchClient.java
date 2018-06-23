@@ -146,7 +146,7 @@ public class SearchClient {
      * @param query Nimmt eine Objekt vom Typ QueryBuidler entgegen
      * @return Gibt ein SearchResponse mit den ensprechenden Hits zurueck
      */
-    private SearchResponse getSearchResultFromResponse(QueryBuilder query){
+    public SearchResponse getSearchResultFromResponse(QueryBuilder query){
         SearchRequest searchRequest = new SearchRequest();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
