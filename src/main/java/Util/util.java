@@ -66,10 +66,7 @@ public class util {
             }
         });
 
-        for (Entry<String, Double> entry : list) {
-            System.out.println(entry.getValue());
 
-        }
         return idf;
 
     }
