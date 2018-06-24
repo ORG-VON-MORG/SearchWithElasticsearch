@@ -3,10 +3,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
 
@@ -17,7 +14,8 @@ public class SearchWithDocFreq {
         SearchClient searchClient;
         QueryBuilder query;
         Long  published_date = null;
-        HashMap<String,Integer> idf;
+        HashMap<String, Double> idf;
+        HashMap<String, Double> tmp;
 
 
         searchClient = new SearchClient();
@@ -33,8 +31,9 @@ public class SearchWithDocFreq {
 
         idf = util.calculateIDF(WAPOId);
 
+        tmp = util.sortedMap(idf);
 
-        query =QueryBuilders.boolQuery()
+        query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
 
 

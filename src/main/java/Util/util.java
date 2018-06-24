@@ -1,8 +1,7 @@
 package Util;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
 import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
 
@@ -30,7 +29,7 @@ public class util {
     public static HashMap calculateIDF(String WAPOId){
         HashMap<String,int[]> mapDocFreq;
         Iterator it;
-        HashMap<String,Integer> idf = new HashMap<String, Integer>();
+        HashMap<String,Double> idf = new HashMap<String, Double>();
 
 
         mapDocFreq = getWordsFrequencies(WAPOId, "contents.contentString");
@@ -41,12 +40,37 @@ public class util {
             String key = entry.getKey();
             int[] value = entry.getValue();
 
-            idf.put(key,(value[2]/value[3]));
+            idf.put(key,((double)value[2]/(double)value[3]));
         }
 
 
         return idf;
 
+
+    }
+
+    /**
+     * Methode nimmt HashMap aus calcuteIDF entgegen und sortiert diese basierend auf idf-Ranking
+     * @param idf nimmt HashMap idf entgegen
+     * @return gibt sortierte HashMap tmp zurueck
+     */
+
+    public static HashMap<String, Double> sortedMap(HashMap<String, Double> idf)
+    {
+        Set<Entry<String, Double>> set = idf.entrySet();
+        List<Entry<String, Double>> list = new ArrayList<Entry<String, Double>>(set);
+        Collections.sort(list, new Comparator<Map.Entry<String, Double>>() {
+            public int compare(Map.Entry<String, Double> o1,
+                               Map.Entry<String, Double> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+
+        for (Entry<String, Double> entry : list) {
+            System.out.println(entry.getValue());
+
+        }
+        return idf;
 
     }
 
