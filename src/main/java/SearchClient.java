@@ -83,7 +83,7 @@ public class SearchClient {
      * @param artikelID Nimmt die ArtikelID der WP entgegen
      */
 
-    public Map getArticelByWPID(String artikelID) throws IOException {
+    public Map getArticleByWPID(String artikelID) throws IOException {
         SearchRequest searchRequest;
         SearchSourceBuilder searchSourceBuilder;
         SearchResponse searchResponse;

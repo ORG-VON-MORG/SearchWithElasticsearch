@@ -115,7 +115,6 @@ public class SearchWithLowLevelAPI {
            System.out.println(responseBody);
 
 
-
        } catch (IOException e) {
            e.printStackTrace();
        }
