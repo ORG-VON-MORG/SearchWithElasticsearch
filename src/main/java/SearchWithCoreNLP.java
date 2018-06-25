@@ -16,7 +16,7 @@ public class SearchWithCoreNLP {
     public Map search(String artikelID) {
 
         try {
-            map = searchClient.getArticelByWPID(artikelID);
+            map = searchClient.getArticleByWPID(artikelID);
         } catch (IOException e) {
             e.printStackTrace();
         }

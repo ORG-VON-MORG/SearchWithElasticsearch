@@ -20,7 +20,7 @@ public class SearchWithDocFreq {
 
         searchClient = new SearchClient();
         try {
-           map = searchClient.getArticelByWPID(WAPOId);
+           map = searchClient.getArticleByWPID(WAPOId);
 
         } catch (IOException e) {
             e.printStackTrace();
