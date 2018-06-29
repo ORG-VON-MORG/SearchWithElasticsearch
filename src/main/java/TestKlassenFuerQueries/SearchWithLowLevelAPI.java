@@ -186,7 +186,4 @@ public class SearchWithLowLevelAPI {
        System.out.println("----------------------------------------------------------------");
        System.out.printf("%-30s    %-10s%-10s%-10s%n", "Word", "doc_freq", "ttf", "term_freq");
    }
-
-
-
 }
