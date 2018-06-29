@@ -34,7 +34,7 @@ public class util {
 
         mapDocFreq = getWordsFrequencies(WAPOId, "contents.contentString");
 
-        it = mapDocFreq.entrySet().iterator();
+        //it = mapDocFreq.entrySet().iterator();
 
         for (Map.Entry<String, int[]> entry : mapDocFreq.entrySet()) {
             String key = entry.getKey();
@@ -42,7 +42,6 @@ public class util {
 
             idf.put(key,((double)value[2]/(double)value[3]));
         }
-
 
         return idf;
 
