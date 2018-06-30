@@ -166,14 +166,11 @@ public class SearchClient {
 
     }
 
-
     /**
      * Schliesst und beendet die Verbindung
      */
     public void closeClient() throws IOException {
         client.close();
-
-
     }
 
 }
