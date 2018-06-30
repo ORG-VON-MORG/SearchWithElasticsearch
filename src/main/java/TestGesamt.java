@@ -6,7 +6,7 @@ public class TestGesamt {
     /**
      * Methode fuehrt eine Suche mit den verschiedenen Sucharten durch und gibt die gefunden Artikel aus
      */
-    public void main (String[] args){
+    public static void main (String[] args){
         //Input Artikel
         //WAPOId ist die ID der Washington Post
         String WAPOId ="34d4708d7cce27237b991c02c98eeeb5";
