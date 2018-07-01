@@ -26,7 +26,10 @@ public class SearchWithLowLevelAPI {
        //getFirstResponse();
        //IndexStatus();
        //searchAuthor("Max Fischer");
-       getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
+       //getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
+       //getWordsFrequencies("ybGNyGMBKRrm5z8M_q_l", "contents.contentString");
+       System.out.println(getDocsCount());
+       getElasticIdFromArtikelId("34d4708d7cce27237b991c02c98eeeb5");
    }
 
    public static void getFirstResponse(){
@@ -106,18 +109,66 @@ public class SearchWithLowLevelAPI {
                     "\"term\" :{ \"user\" : " + "\"" + author + "\"" + "}" +
                "}" +
                "}";
-
        HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
        try {
            Response response = restClient.performRequest("GET", "/customer/_search", params, entity);
-
            String responseBody = EntityUtils.toString(response.getEntity());
            System.out.println(responseBody);
-
-
        } catch (IOException e) {
            e.printStackTrace();
        }
+   }
+
+    /**
+     * Funktion, die die Anzahl alle Dokumente im elasticsearch index zurückgibt
+     * @return docsCount
+     */
+   public static long getDocsCount() {
+       RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+       Map<String, String> params = Collections.emptyMap();
+       HttpEntity entity = new NStringEntity("", ContentType.TEXT_PLAIN);
+       try {
+           Response response = rc.performRequest("GET", "_stats/docs?pretty", params, entity);
+           String responseBody = EntityUtils.toString(response.getEntity());
+           long docsCount = new JSONObject(responseBody)
+                                    .getJSONObject("_all")
+                                    .getJSONObject("primaries")
+                                    .getJSONObject("docs")
+                                    .getLong("count");
+           return docsCount;
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+       return 0;
+   }
+
+    /**
+     * Funktion, die nimmt ein Zeitungsartikel ID und gibt die Index id im elasticsearch zurück
+     * @param artikelId die Zeitungsartikel ID
+     * @return elasticId
+     */
+   public static String getElasticIdFromArtikelId(String artikelId) {
+       RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+       Map<String, String> params = Collections.emptyMap();
+       String json = "{\"_source\":[\"id\"]," +
+                      "\"query\":" +
+                                "{\"term\":" +
+                                        "{\"id\":\"" + artikelId + "\"}}}";
+       HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
+       try {
+           Response response = rc.performRequest("GET", "last/_doc/_search?pretty", params, entity);
+           String responseBody = EntityUtils.toString(response.getEntity());
+           String elasticId = new JSONObject(responseBody)
+                                    .getJSONObject("hits")
+                                    .getJSONArray("hits")
+                                    .getJSONObject(0)
+                                    .getString("_id");
+           System.out.println(elasticId);
+           return elasticId;
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+       return null;
    }
 
     /**
@@ -126,19 +177,20 @@ public class SearchWithLowLevelAPI {
      * Das Array enthält: in wie vielen Dokumenten das Wort vorkommt,
      *                    wie oft das Wort insgesamt vorkommt und
      *                    wie oft das Wort im angegebenen Artikel(nach Artikel ID) vorkommt
-     * @param id Zeitungsartikel ID
+     * @param artikelId Zeitungsartikel ID
      * @param field field in JSON-Datei, in dem die Funktion die Wörter suche
      * @return wordFreq
      */
-   public static HashMap<String, int[]> getWordsFrequencies(String id, String field){
+   public static HashMap<String, int[]> getWordsFrequencies(String artikelId, String field){
        RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
        Map<String, String> params = Collections.emptyMap();
-       String json = "{  \"ids\" : [\"" + id +"\"], " +
-                        "\"parameters\": { " +
-                            "\"fields\": [\""+ field +"\"], " +
-                            "\"term_statistics\": true, " +
-                            "\"offsets\":false, " +
-                            "\"payloads\":false, " +
+       String elasticId = getElasticIdFromArtikelId(artikelId);
+       String json = "{  \"ids\" : [\"" + elasticId +"\"], "    +
+                        "\"parameters\": { "                    +
+                            "\"fields\": [\""+ field +"\"], "   +
+                            "\"term_statistics\": true, "       +
+                            "\"offsets\":false, "               +
+                            "\"payloads\":false, "              +
                             "\"positions\":false } }";
        HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
        HashMap<String, int[]> wordFreq = new HashMap<String, int[]>();
@@ -163,7 +215,7 @@ public class SearchWithLowLevelAPI {
                wordFreq.put(key, wordStatistics);
            }
            //comment this line below to disable printing the Statistics
-           printWordFrequencies(wordFreq);
+           //printWordFrequencies(wordFreq);
        } catch (IOException e){
            e.printStackTrace();
        }

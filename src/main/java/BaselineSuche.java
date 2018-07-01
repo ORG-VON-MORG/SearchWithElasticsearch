@@ -38,7 +38,7 @@ public class BaselineSuche {
         for(Sentence sent: doc.sentences()){
             List<String> entityList = sent.mentions();
             for (String entity : entityList){
-                titleEntities += entity +" ";
+                titleEntities += entity + " ";
             }
 
         }

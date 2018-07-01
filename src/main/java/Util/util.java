@@ -2,10 +2,14 @@ package Util;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.lang.Math;
 
+import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getDocsCount;
 import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
 
 public class util {
+
+    public static final long docsCount = getDocsCount();
 
 
 
@@ -21,10 +25,10 @@ public class util {
     }
 
     /**
-     * Methode Nimmt eine WAPOId entgegen, berechnet TFIDF und gibt den Wert
+     * Methode Nimmt eine WAPOId entgegen, berechnet IDF und gibt den Wert
      * zurueck
      * @param WAPOId Die ID im Index der WAPO entgegen
-     * @return Gibt eine HashMap zurueck mit dem Wort als String und der errechneten TFIDF
+     * @return Gibt eine HashMap zurueck mit dem Wort als String und der errechneten IDF
      */
     public static HashMap calculateIDF(String WAPOId){
         HashMap<String,int[]> mapDocFreq;
@@ -40,9 +44,11 @@ public class util {
             String key = entry.getKey();
             int[] value = entry.getValue();
 
-            idf.put(key,((double)value[2]/(double)value[3]));
+            //idf = log(1 + |D|/df)
+            //|D| : anzahl alle Dokumente im Index, df : doc_freq
+            double idfValue = Math.log(1 + (docsCount/(double)value[0]));
+            idf.put(key, idfValue);
         }
-
         return idf;
 
 
