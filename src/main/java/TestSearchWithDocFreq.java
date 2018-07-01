@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class TestSearchWithDocFreq {
 
-    public void main (String[] args){
+    public static void main (String[] args){
 
         SearchWithDocFreq searchWithDocFreq;
         String WAPOId ="34d4708d7cce27237b991c02c98eeeb5";

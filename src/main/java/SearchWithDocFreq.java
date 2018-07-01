@@ -10,7 +10,8 @@ import org.elasticsearch.search.SearchHits;
 import java.io.IOException;
 import java.util.*;
 
-import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
+import static TestKlassenFuerQueries.SearchWithLowLevelAPI.closeClient;
+import static TestKlassenFuerQueries.SearchWithLowLevelAPI.startClient;
 
 public class SearchWithDocFreq {
 
@@ -31,7 +32,8 @@ public class SearchWithDocFreq {
 
 
 
-        searchClient = new SearchClient();
+        searchClient = new SearchClient();      //start the client from SearchClient.java
+        startClient();                          //start the client from SearchWithLowLevelAPI.java
         try {
            map = searchClient.getArticleByWPID(WAPOId);
 
@@ -84,28 +86,16 @@ public class SearchWithDocFreq {
 
 
             try {
-                searchClient.closeClient();
+                searchClient.closeClient();     //close the client from SearchClient.java
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            closeClient();                  //close the client from SearchWithLowLevelAPI.java
+                                            //maybe later combine the two into single class(?)
 
             return arrayList;
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         return null;
 

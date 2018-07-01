@@ -1,122 +1,31 @@
 package TestKlassenFuerQueries;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.RequestLine;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
-
 import java.io.IOException;
 import java.util.*;
-
 import org.json.JSONObject;
-import org.json.*;
 
 
 public class SearchWithLowLevelAPI {
 
+    public static RestClient restClient;
 
-   public static void main(String[] args){
-
-       //getFirstResponse();
-       //IndexStatus();
-       //searchAuthor("Max Fischer");
+   public static void main(String[] args) {
        //getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
        //getWordsFrequencies("ybGNyGMBKRrm5z8M_q_l", "contents.contentString");
+       startClient();
        System.out.println(getDocsCount());
        getElasticIdFromArtikelId("34d4708d7cce27237b991c02c98eeeb5");
-   }
+       getElasticIdFromArtikelId("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
+       getElasticIdFromArtikelId("ecb715f2-efd4-11e2-9008-61e94a7ea20d");
+       closeClient();
 
-   public static void getFirstResponse(){
-       RestClient restClient = RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")).build();
-
-       //  Request request = new Request("GET", "/");
-       //Response response = restClient.performRequest(request);
-
-       Response response = null;
-       try {
-           response = restClient.performRequest("GET", "/");
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-       RequestLine requestLine = response.getRequestLine();
-       HttpHost host = response.getHost();
-       int statusCode = response.getStatusLine().getStatusCode();
-       Header[] headers = response.getHeaders();
-
-
-       System.out.println("Request" + response.toString());
-
-       try {
-           String responseBody = EntityUtils.toString(response.getEntity());
-           System.out.println(responseBody);
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-
-       try {
-           restClient.close();
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-
-   }
-
-   public static void IndexStatus(){
-       RestClient restClient = RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")).build();
-
-
-       Map<String, String> params = Collections.emptyMap();
-       String jsonString = "{" +
-               "\"user\":\"kimchy\"," +
-               "\"postDate\":\"2013-01-30\"," +
-               "\"message\":\"trying out Elasticsearch\"" +
-               "}";
-       HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-       try {
-           Response response = restClient.performRequest("PUT", "/posts/doc/1", params, entity);
-
-           String responseBody = EntityUtils.toString(response.getEntity());
-           System.out.println(responseBody);
-
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-
-   }
-
-   public static void getFirstDocumentAtIndex(){
-       RestClient restClient = RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")).build();
-
-       Map<String, String> params = Collections.emptyMap();
-       String jsonString = "{" +
-               "\"author\":\"kimchy\"," +
-               "\"postDate\":\"2013-01-30\"," +
-               "\"message\":\"trying out Elasticsearch\"" +
-               "}";
-   }
-
-   public static void searchAuthor(String author){
-       RestClient restClient = RestClient.builder(new HttpHost("192.168.178.240", 9200, "http")).build();
-       Map<String, String> params = Collections.emptyMap();
-       String jsonString = "{" +
-               "\"query\" : {" +
-                    "\"term\" :{ \"user\" : " + "\"" + author + "\"" + "}" +
-               "}" +
-               "}";
-       HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-       try {
-           Response response = restClient.performRequest("GET", "/customer/_search", params, entity);
-           String responseBody = EntityUtils.toString(response.getEntity());
-           System.out.println(responseBody);
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
    }
 
     /**
@@ -124,11 +33,10 @@ public class SearchWithLowLevelAPI {
      * @return docsCount
      */
    public static long getDocsCount() {
-       RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
        Map<String, String> params = Collections.emptyMap();
        HttpEntity entity = new NStringEntity("", ContentType.TEXT_PLAIN);
        try {
-           Response response = rc.performRequest("GET", "_stats/docs?pretty", params, entity);
+           Response response = restClient.performRequest("GET", "_stats/docs?pretty", params, entity);
            String responseBody = EntityUtils.toString(response.getEntity());
            long docsCount = new JSONObject(responseBody)
                                     .getJSONObject("_all")
@@ -148,22 +56,20 @@ public class SearchWithLowLevelAPI {
      * @return elasticId
      */
    public static String getElasticIdFromArtikelId(String artikelId) {
-       RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
        Map<String, String> params = Collections.emptyMap();
-       String json = "{\"_source\":[\"id\"]," +
-                      "\"query\":" +
-                                "{\"term\":" +
+       String json = "{\"_source\":[\"_id\"],"       +
+                      "\"query\":"                   +
+                                "{\"match\":"        +
                                         "{\"id\":\"" + artikelId + "\"}}}";
        HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
        try {
-           Response response = rc.performRequest("GET", "last/_doc/_search?pretty", params, entity);
+           Response response = restClient.performRequest("GET", "last/_doc/_search?pretty", params, entity);
            String responseBody = EntityUtils.toString(response.getEntity());
            String elasticId = new JSONObject(responseBody)
                                     .getJSONObject("hits")
                                     .getJSONArray("hits")
                                     .getJSONObject(0)
                                     .getString("_id");
-           System.out.println(elasticId);
            return elasticId;
        } catch (IOException e) {
            e.printStackTrace();
@@ -182,7 +88,6 @@ public class SearchWithLowLevelAPI {
      * @return wordFreq
      */
    public static HashMap<String, int[]> getWordsFrequencies(String artikelId, String field){
-       RestClient rc = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
        Map<String, String> params = Collections.emptyMap();
        String elasticId = getElasticIdFromArtikelId(artikelId);
        String json = "{  \"ids\" : [\"" + elasticId +"\"], "    +
@@ -194,8 +99,8 @@ public class SearchWithLowLevelAPI {
                             "\"positions\":false } }";
        HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
        HashMap<String, int[]> wordFreq = new HashMap<String, int[]>();
-       try{
-           Response response = rc.performRequest("GET", "last/_doc/_mtermvectors?pretty", params, entity);
+       try {
+           Response response = restClient.performRequest("GET", "last/_doc/_mtermvectors?pretty", params, entity);
            String responseBody = EntityUtils.toString(response.getEntity());
            JSONObject terms = new JSONObject(responseBody)
                                     .getJSONArray("docs")
@@ -205,7 +110,7 @@ public class SearchWithLowLevelAPI {
                                     .getJSONObject("terms");
            //iterate over the JSONObject, which contains the word AND another JSONObject (the statistics)
            Iterator keys = terms.keys();
-           while (keys.hasNext()){
+           while (keys.hasNext()) {
                String key = (String)keys.next();
                JSONObject word = terms.getJSONObject(key);
                int[] wordStatistics = new int[3];
@@ -216,20 +121,32 @@ public class SearchWithLowLevelAPI {
            }
            //comment this line below to disable printing the Statistics
            //printWordFrequencies(wordFreq);
-       } catch (IOException e){
-           e.printStackTrace();
+       } catch (IOException ioe) {
+           ioe.printStackTrace();
        }
        return wordFreq;
+   }
+
+   public static void startClient() {
+       restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+   }
+
+   public static void closeClient() {
+       try {
+           restClient.close();
+       } catch (IOException ioe) {
+           ioe.printStackTrace();
+       }
    }
 
     /**
      * Funktion für die Ausgabe der wordFreq map
      * @param wordFreq
      */
-   public static void printWordFrequencies(HashMap<String, int[]> wordFreq){
+   public static void printWordFrequencies(HashMap<String, int[]> wordFreq) {
        System.out.printf("%-30s    %-10s%-10s%-10s%n", "Word", "doc_freq", "ttf", "term_freq");
        System.out.println("----------------------------------------------------------------");
-       for(String st : wordFreq.keySet()){
+       for (String st : wordFreq.keySet()) {
            System.out.printf("%-30s:   ", st);
            for(int i : wordFreq.get(st))
                System.out.printf("%-10s", i);

@@ -14,7 +14,11 @@ public class SearchWithCoreNLP {
     Map map = null;
     SearchClient searchClient;
 
-    public SearchWithCoreNLP() {
+    //public SearchWithCoreNLP() {
+    //    searchClient = new SearchClient();
+    //}
+
+    public void startClient() {
         searchClient = new SearchClient();
     }
 
