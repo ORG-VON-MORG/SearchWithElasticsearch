@@ -10,7 +10,6 @@ public class TestGesamt {
         //Input Artikel
         //WAPOId ist die ID der Washington Post
         String WAPOId ="34d4708d7cce27237b991c02c98eeeb5";
-        String WAPOId2 = "ecb715f2-efd4-11e2-9008-61e94a7ea20d";
 
 
         System.out.println("Der Basis Artikel hat die ID: "+ WAPOId );
@@ -24,7 +23,7 @@ public class TestGesamt {
         ArrayList<String> arrayList;
         searchWithDocFreq = new SearchWithDocFreq();
         arrayList = searchWithDocFreq.search(WAPOId);
-        searchWithDocFreq.search(WAPOId2);
+
         System.out.println("Gefundene Artikel:");
         System.out.println(arrayList);
 
@@ -37,10 +36,10 @@ public class TestGesamt {
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         searchWithCoreNLP.startClient();
         Map ausgabe = searchWithCoreNLP.search(WAPOId);
-        Map ausgabe2 = searchWithCoreNLP.search(WAPOId2);
+
         System.out.println("Gefundene Artikel:");
         System.out.println(ausgabe);
-        System.out.println(ausgabe2);
+
         searchWithCoreNLP.closeClient();
 
 

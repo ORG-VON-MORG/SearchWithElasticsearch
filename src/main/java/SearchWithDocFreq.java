@@ -29,7 +29,7 @@ public class SearchWithDocFreq {
         HashMap<String, Double> tmp;
         SearchResponse searchResponse;
         ArrayList<String> arrayList = new ArrayList<String>();
-
+        final int MAX_KEYWORDS_IN_QUERY = 5;
 
 
         searchClient = new SearchClient();      //start the client from SearchClient.java
@@ -52,14 +52,14 @@ public class SearchWithDocFreq {
         tmp = Util.util.calculateIDF(WAPOId);
         idf = Util.util.sortedMap(tmp);
 
+        
 
-        for (Map.Entry<String, Double> entry : idf.entrySet()) {
-            String key = entry.getKey();
-            Double value = entry.getValue();
+        Iterator<Map.Entry<String,Double>> iterator = idf.entrySet().iterator();
 
 
-            ((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString",key));
-
+        for(int i = 0;i<=MAX_KEYWORDS_IN_QUERY;i++){
+            Map.Entry<String,Double> entry = iterator.next();
+            ((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
 
 
         }
