@@ -59,7 +59,7 @@ public class SearchWithDocFreq {
 
         for(int i = 0;i<=MAX_KEYWORDS_IN_QUERY;i++){
            Map.Entry<String,Double> entry = iterator.next();
-           ((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
+           ((BoolQueryBuilder) query).should(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
 
 
         }

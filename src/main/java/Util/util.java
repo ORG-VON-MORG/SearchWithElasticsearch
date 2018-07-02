@@ -57,7 +57,7 @@ public class util {
     /**
      * Methode nimmt HashMap aus calcuteIDF entgegen und sortiert diese basierend auf idf-Ranking
      * @param idf nimmt HashMap idf entgegen
-     * @return gibt sortierte HashMap tmp zurueck
+     * @return gibt sortierte List zurueck
      */
 
     public static List<Entry<String, Double>> sortedMap(HashMap<String, Double> idf)
