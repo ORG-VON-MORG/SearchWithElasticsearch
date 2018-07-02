@@ -25,7 +25,7 @@ public class SearchWithDocFreq {
         SearchClient searchClient;
         QueryBuilder query;
         Long  published_date = null;
-        HashMap<String, Double> idf;
+        List<Map.Entry<String, Double>> idf;
         HashMap<String, Double> tmp;
         SearchResponse searchResponse;
         ArrayList<String> arrayList = new ArrayList<String>();
@@ -49,17 +49,17 @@ public class SearchWithDocFreq {
                 .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
 
 
-        tmp = Util.util.calculateIDF(WAPOId);
-        idf = Util.util.sortedMap(tmp);
+        tmp = util.calculateIDF(WAPOId);
+        idf = util.sortedMap(tmp);
 
-        
+        System.out.println("test");
 
-        Iterator<Map.Entry<String,Double>> iterator = idf.entrySet().iterator();
+       Iterator <Map.Entry<String, Double>> iterator = idf.iterator();
 
 
         for(int i = 0;i<=MAX_KEYWORDS_IN_QUERY;i++){
-            Map.Entry<String,Double> entry = iterator.next();
-            ((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
+           Map.Entry<String,Double> entry = iterator.next();
+           ((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
 
 
         }

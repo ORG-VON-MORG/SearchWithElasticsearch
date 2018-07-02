@@ -60,7 +60,7 @@ public class util {
      * @return gibt sortierte HashMap tmp zurueck
      */
 
-    public static HashMap<String, Double> sortedMap(HashMap<String, Double> idf)
+    public static List<Entry<String, Double>> sortedMap(HashMap<String, Double> idf)
     {
         Set<Entry<String, Double>> set = idf.entrySet();
         List<Entry<String, Double>> list = new ArrayList<Entry<String, Double>>(set);
@@ -70,6 +70,11 @@ public class util {
                 return o2.getValue().compareTo(o1.getValue());
             }
         });
-        return idf;
+        for (Entry<String, Double> entry : list) {
+            System.out.println(entry.getValue() + " " + entry.getKey());
+            //tmp = list.getValue();
+        }
+        System.out.println();
+        return list;
     }
 }
