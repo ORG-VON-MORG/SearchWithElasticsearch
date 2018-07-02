@@ -70,11 +70,7 @@ public class util {
                 return o2.getValue().compareTo(o1.getValue());
             }
         });
-        for (Entry<String, Double> entry : list) {
-            System.out.println(entry.getValue() + " " + entry.getKey());
-            //tmp = list.getValue();
-        }
-        System.out.println();
+
         return list;
     }
 }

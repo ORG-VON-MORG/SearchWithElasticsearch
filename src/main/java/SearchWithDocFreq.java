@@ -93,11 +93,11 @@ public class SearchWithDocFreq {
             closeClient();                  //close the client from SearchWithLowLevelAPI.java
                                             //maybe later combine the two into single class(?)
 
-            return arrayList;
+          //  return arrayList;
 
         }
 
-        return null;
+        return arrayList;
 
     }
 

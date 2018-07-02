@@ -117,7 +117,7 @@ public class SearchClient {
         SearchHits hits;
         SearchHit[] searchHits;
 
-        map= new HashMap<String,Map>();
+        map = new HashMap<String,Map>();
 
         QueryBuilder query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.OR))
