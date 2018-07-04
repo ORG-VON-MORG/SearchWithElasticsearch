@@ -46,7 +46,7 @@ public class util {
 
             //idf = log(1 + |D|/df)
             //|D| : anzahl alle Dokumente im Index, df : doc_freq
-            double idfValue = Math.log(1 + (docsCount/(double)value[0]));
+            double idfValue =value[2]* Math.log( (docsCount/(double)value[0]));
             idf.put(key, idfValue);
         }
         return idf;
