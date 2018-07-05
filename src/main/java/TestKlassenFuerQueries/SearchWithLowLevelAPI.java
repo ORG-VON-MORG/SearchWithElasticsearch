@@ -9,7 +9,10 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import java.io.IOException;
 import java.util.*;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 
 public class SearchWithLowLevelAPI {
@@ -87,9 +90,11 @@ public class SearchWithLowLevelAPI {
      * @param field field in JSON-Datei, in dem die Funktion die Wörter suche
      * @return wordFreq
      */
+
    public static HashMap<String, int[]> getWordsFrequencies(String artikelId, String field){
        Map<String, String> params = Collections.emptyMap();
        String elasticId = getElasticIdFromArtikelId(artikelId);
+       String contentString = getContentString(elasticId);
        String json = "{  \"ids\" : [\"" + elasticId +"\"], "    +
                         "\"parameters\": { "                    +
                             "\"fields\": [\""+ field +"\"], "   +
@@ -154,5 +159,27 @@ public class SearchWithLowLevelAPI {
        }
        System.out.println("----------------------------------------------------------------");
        System.out.printf("%-30s    %-10s%-10s%-10s%n", "Word", "doc_freq", "ttf", "term_freq");
+   }
+
+   public static String getContentString(String elasticId){
+       String cs = "";
+
+       Map<String, String> params = Collections.emptyMap();
+       HttpEntity entity = new NStringEntity("", ContentType.TEXT_PLAIN);
+       try {
+           String endpoint = "last/_doc/" + elasticId + "?_source_include=contents.contentString&pretty";
+           Response response = restClient.performRequest("GET", endpoint, params, entity);
+           String responseBody = EntityUtils.toString(response.getEntity());
+           JSONArray content = new JSONObject(responseBody)
+                                     .getJSONObject("_source")
+                   .getJSONArray("contents");
+           for (int i = 0; i < content.length(); i++)
+                      cs += content.getJSONObject(i).getString("contentString");
+       }
+       catch (IOException ioe) {
+           ioe.printStackTrace();
+       }
+
+       return Jsoup.parse(cs).text();
    }
 }

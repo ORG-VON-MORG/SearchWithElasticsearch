@@ -2,8 +2,10 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 import edu.stanford.nlp.util.CoreMap;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -64,7 +66,7 @@ public class SearchWithCoreNLP {
          * Überprüfen, ob das Server auf dem VM im hintergrunc läuft oder nicht:
          * netstat -atnu | grep -E ".*9000.*LISTEN"
          * ps aux | grep stanford
-        */
+         */
         StanfordCoreNLPClient pipeline = new StanfordCoreNLPClient(props, "http://localhost", 9000, 4);
         Annotation document = new Annotation(title);
         pipeline.annotate(document);            //run the document / title through the corenlp server
@@ -72,7 +74,7 @@ public class SearchWithCoreNLP {
 
         //get every sentences in title, then get every named entity in the sentence
         for (CoreMap sentence : document.get(CoreAnnotations.SentencesAnnotation.class)) {
-            for(CoreMap entityMention : sentence.get(CoreAnnotations.MentionsAnnotation.class)) {
+            for (CoreMap entityMention : sentence.get(CoreAnnotations.MentionsAnnotation.class)) {
                 String m = entityMention.get(CoreAnnotations.TextAnnotation.class);
                 titleEntities += m + " ";
                 //System.out.println( m + ", ");      //delete this later, only for testing
