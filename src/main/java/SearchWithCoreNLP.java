@@ -2,10 +2,8 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 import edu.stanford.nlp.util.CoreMap;
-import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -80,9 +78,7 @@ public class SearchWithCoreNLP {
                 //System.out.println( m + ", ");      //delete this later, only for testing
             }
         }
-
         //System.out.println(titleEntities);
-
         try {
             return mapWithAllRelevantArticle = searchClient.searchArticleByStringAndDate(titleEntities, published_date);
         } catch (IOException e) {

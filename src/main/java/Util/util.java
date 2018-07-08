@@ -15,8 +15,8 @@ import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
 
 public class util {
 
-    public static final long docsCount = getDocsCount();
-    public static final Set<String> stopWordSet = getStopWordListAsSet();
+    private static final long docsCount = getDocsCount();
+    private static final Set<String> stopWordSet = getStopWordListAsSet();
 
 
 
@@ -52,7 +52,7 @@ public class util {
 
             //idf = log(1 + |D|/df)
             //|D| : anzahl alle Dokumente im Index, df : doc_freq
-            double idfValue =value[2]* Math.log( (docsCount/(double)value[0]));
+            double idfValue = value[2]* Math.log( (docsCount/(double)value[0]));
             idf.put(key, idfValue);
         }
         return idf;
@@ -79,6 +79,10 @@ public class util {
         return list;
     }
 
+    /**
+     * Diese Funktion liest die Stopwortlist in resources folder und füge alle Wörter in einem Set
+     * @return stopWordSet das Stopwort-Set
+     */
     public static Set<String> getStopWordListAsSet() {
         Set <String> stopWordSet = new HashSet<String>();
         try {
@@ -95,13 +99,23 @@ public class util {
         return null;
     }
 
-    public static boolean isStopword(String word) {
+    /**
+     * prüfe, ob ein Wort ein Stopwort oder nicht anhand gespeicherte Stopword-Set
+     * @param word zu überprüfende Wort
+     * @return true wenn das Wort ein Stopwort ist, false wenn nicht
+     */
+    private static boolean isStopword(String word) {
         if(word.length() < 2) return true;
         if(word.charAt(0) >= '0' && word.charAt(0) <= '9') return true; //remove numbers, "25th", etc
         if(stopWordSet.contains(word.toLowerCase())) return true;
         else return false;
     }
 
+    /**
+     * Diese Funktion nimmt ein String und filtert alle Stopwörter heraus
+     * @param string das String
+     * @return result gefilterte String
+     */
     public static String removeStopWords(String string) {
         String result = "";
         String[] words = string.split("\\s+");
@@ -113,6 +127,11 @@ public class util {
         return result;
     }
 
+    /**
+     * nimmt ein String, lösche alle XML- oder HTML-Tags
+     * @param string das String
+     * @return gefilterte String
+     */
     public static String cleanXMLTags(String string) {
         return Jsoup.parse(string).text();
     }
