@@ -184,7 +184,7 @@ public class SearchWithLowLevelAPI {
            JSONArray content = new JSONObject(responseBody).getJSONObject("_source").getJSONArray("contents");
            for (int i = 0; i < content.length(); i++)
                cs += content.getJSONObject(i).getString("contentString");
-                newCS = cs.replaceAll("[\\p{Punct}&&[^0-9]]", "");
+                newCS = cs.replaceAll("[\\p{Punct}&&[^0-9]]", " ");
        } catch (IOException ioe) {
            ioe.printStackTrace();
        }
