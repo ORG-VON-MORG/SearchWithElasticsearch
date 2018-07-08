@@ -135,10 +135,4 @@ public class util {
     public static String cleanXMLTags(String string) {
         return Jsoup.parse(string).text();
     }
-
-    public static void main(String[] args) {
-        String s = "the quick brown fox jumped over a lazy dog";
-        System.out.println(removeStopWords(s));
-
-    }
 }
