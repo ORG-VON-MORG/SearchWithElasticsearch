@@ -9,6 +9,9 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import java.io.IOException;
 import java.util.*;
+import java.lang.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +22,7 @@ public class SearchWithLowLevelAPI {
 
     public static RestClient restClient;
 
-   public static void main(String[] args) {
+  public static void main(String[] args) {
        //getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
        //getWordsFrequencies("ybGNyGMBKRrm5z8M_q_l", "contents.contentString");
        startClient();
@@ -161,6 +164,8 @@ public class SearchWithLowLevelAPI {
        System.out.printf("%-30s    %-10s%-10s%-10s%n", "Word", "doc_freq", "ttf", "term_freq");
    }
 
+
+   //this method is getting contentstring from elasticId
    public static String getContentString(String elasticId){
        String cs = "";
 
@@ -170,11 +175,10 @@ public class SearchWithLowLevelAPI {
            String endpoint = "last/_doc/" + elasticId + "?_source_include=contents.contentString&pretty";
            Response response = restClient.performRequest("GET", endpoint, params, entity);
            String responseBody = EntityUtils.toString(response.getEntity());
-           JSONArray content = new JSONObject(responseBody)
-                                     .getJSONObject("_source")
-                   .getJSONArray("contents");
+           JSONArray content = new JSONObject(responseBody).getJSONObject("_source").getJSONArray("contents");
            for (int i = 0; i < content.length(); i++)
                       cs += content.getJSONObject(i).getString("contentString");
+                      cs.replaceAll("[\\p{Punct}&&[^0-9]]", "");
        }
        catch (IOException ioe) {
            ioe.printStackTrace();
