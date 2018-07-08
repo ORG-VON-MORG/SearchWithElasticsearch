@@ -1,5 +1,11 @@
 package Util;
 
+import org.jsoup.Jsoup;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.lang.Math;
@@ -10,6 +16,7 @@ import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
 public class util {
 
     public static final long docsCount = getDocsCount();
+    public static final Set<String> stopWordSet = getStopWordListAsSet();
 
 
 
@@ -21,7 +28,6 @@ public class util {
      */
     public static String[] StringToArrayTokenization(String string){
         return string.split("\\s");
-
     }
 
     /**
@@ -72,5 +78,43 @@ public class util {
         });
 
         return list;
+    }
+
+    public static Set<String> getStopWordListAsSet() {
+        Set <String> stopWordSet = new HashSet<String>();
+        try {
+            BufferedReader buffered = new BufferedReader(new FileReader(new File("src/main/resources/stopwords")));
+            String line;
+            while((line = buffered.readLine()) != null) {
+                stopWordSet.add(line);
+            }
+            return stopWordSet;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean isStopword(String word) {
+        if(word.length() < 2) return true;
+        if(word.charAt(0) >= '0' && word.charAt(0) <= '9') return true; //remove numbers, "25th", etc
+        if(stopWordSet.contains(word.toLowerCase())) return true;
+        else return false;
+    }
+
+    public static String removeStopWords(String string) {
+        String result = "";
+        String[] words = string.split("\\s+");
+        for(String word : words) {
+            if(word == null || word.trim().length() == 0) continue;
+            if(isStopword(word)) continue; //remove stopwords
+            result += (word+" ");
+        }
+        return result;
+    }
+
+    public static String cleanXMLTags(String string) {
+        return Jsoup.parse(string).text();
     }
 }
