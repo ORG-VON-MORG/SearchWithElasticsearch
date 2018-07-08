@@ -50,7 +50,7 @@ public class util {
             String key = entry.getKey();
             int[] value = entry.getValue();
 
-            //idf = log(1 + |D|/df)
+            //idf = tf * log(1 + |D|/df)
             //|D| : anzahl alle Dokumente im Index, df : doc_freq
             double idfValue = value[2]* Math.log( (docsCount/(double)value[0]));
             idf.put(key, idfValue);
@@ -134,5 +134,11 @@ public class util {
      */
     public static String cleanXMLTags(String string) {
         return Jsoup.parse(string).text();
+    }
+
+    public static void main(String[] args) {
+        String s = "the quick brown fox jumped over a lazy dog";
+        System.out.println(removeStopWords(s));
+
     }
 }

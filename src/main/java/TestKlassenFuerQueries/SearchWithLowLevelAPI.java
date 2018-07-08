@@ -107,7 +107,9 @@ public class SearchWithLowLevelAPI {
                     .getJSONArray("contents");
             //put every content.contentString field into the List
             for (int i = 0; i < content.length(); i++) {
-                String paragraph = util.cleanXMLTags(content.getJSONObject(i).getString("contentString"));
+                String paragraph = util.removeStopWords(
+                                   util.cleanXMLTags(
+                                   content.getJSONObject(i).getString("contentString")));
                 contentStringList.add(paragraph);
             }
             closeClient();
@@ -178,14 +180,13 @@ public class SearchWithLowLevelAPI {
 
                    //the map already contains the word?
                    if(wordFreq.containsKey(key)) {
-                       int[] oldWordStatistics = wordFreq.get(key);
-                       wordStatistics[0] = oldWordStatistics[0] + doc_freq;     //in wie vielen Dokumenten das Wort vorkommt
-                       wordStatistics[1] = oldWordStatistics[1] + ttf;          //wie oft das Wort insgesamt vorkommt
-                       wordStatistics[2] = oldWordStatistics[2] + term_freq;    //wie oft das Wort im angegebenen Artikel vorkommt
-                   } else {
                        wordStatistics[0] = doc_freq;
                        wordStatistics[1] = ttf;
-                       wordStatistics[2] = term_freq;
+                       wordStatistics[2] = wordFreq.get(key)[2] + term_freq;
+                   } else {
+                       wordStatistics[0] = doc_freq;                            //in wie vielen Dokumenten das Wort vorkommt
+                       wordStatistics[1] = ttf;                                 //wie oft das Wort insgesamt vorkommt
+                       wordStatistics[2] = term_freq;                           //wie oft das Wort im angegebenen Artikel vorkommt
                    }
                    wordFreq.put(key, wordStatistics);
                }
