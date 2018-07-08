@@ -25,14 +25,18 @@ public class SearchWithLowLevelAPI {
   public static void main(String[] args) {
        //getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
        //getWordsFrequencies("ybGNyGMBKRrm5z8M_q_l", "contents.contentString");
-       startClient();
+       StartClient();
        System.out.println(getDocsCount());
+       getContentString("j6qkx2MBKRrm5z8MDDOZ");
        getElasticIdFromArtikelId("34d4708d7cce27237b991c02c98eeeb5");
        getElasticIdFromArtikelId("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
        getElasticIdFromArtikelId("ecb715f2-efd4-11e2-9008-61e94a7ea20d");
        closeClient();
 
    }
+
+    private static void StartClient() {
+    }
 
     /**
      * Funktion, die die Anzahl alle Dokumente im elasticsearch index zurückgibt
@@ -166,24 +170,25 @@ public class SearchWithLowLevelAPI {
 
 
    //this method is getting contentstring from elasticId
-   public static String getContentString(String elasticId){
+   public static String getContentString(String elasticId) {
        String cs = "";
 
        Map<String, String> params = Collections.emptyMap();
        HttpEntity entity = new NStringEntity("", ContentType.TEXT_PLAIN);
+       String newCS = null;
        try {
            String endpoint = "last/_doc/" + elasticId + "?_source_include=contents.contentString&pretty";
-           Response response = restClient.performRequest("GET", endpoint, params, entity);
+           Response response;
+           response = restClient.performRequest("GET", endpoint, params, entity);
            String responseBody = EntityUtils.toString(response.getEntity());
            JSONArray content = new JSONObject(responseBody).getJSONObject("_source").getJSONArray("contents");
            for (int i = 0; i < content.length(); i++)
-                      cs += content.getJSONObject(i).getString("contentString");
-                      cs.replaceAll("[\\p{Punct}&&[^0-9]]", "");
-       }
-       catch (IOException ioe) {
+               cs += content.getJSONObject(i).getString("contentString");
+                newCS = cs.replaceAll("[\\p{Punct}&&[^0-9]]", "");
+       } catch (IOException ioe) {
            ioe.printStackTrace();
        }
 
-       return Jsoup.parse(cs).text();
+       return Jsoup.parse(newCS).text();
    }
 }
