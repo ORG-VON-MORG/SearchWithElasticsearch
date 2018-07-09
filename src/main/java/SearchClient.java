@@ -152,7 +152,8 @@ public class SearchClient {
      * @return Gibt ein SearchResponse mit den ensprechenden Hits zurueck
      */
     public SearchResponse getSearchResultFromResponse(QueryBuilder query){
-        SearchRequest searchRequest = new SearchRequest();
+        SearchRequest searchRequest = new SearchRequest("last");
+        searchRequest.types("_doc");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(query);
