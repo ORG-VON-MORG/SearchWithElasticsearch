@@ -32,6 +32,7 @@ public class SearchClient {
         this.ipAdresse = ipAdresse;
         this.port = port;
         this.index = index;
+
     }
 
     /**
