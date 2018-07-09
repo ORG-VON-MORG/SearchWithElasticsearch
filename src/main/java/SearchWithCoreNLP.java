@@ -22,16 +22,6 @@ public class SearchWithCoreNLP {
         searchClient = new SearchClient();
     }
 
-    /**
-     * schliesst die Client aus
-     */
-    public void closeClient() {
-        try {
-            searchClient.closeClient();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
 
     public Map search(String artikelID) {
 

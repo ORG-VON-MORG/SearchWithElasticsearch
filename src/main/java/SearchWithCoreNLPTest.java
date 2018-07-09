@@ -35,7 +35,7 @@ public class SearchWithCoreNLPTest {
         Map a4 = searchWithCoreNLP.search(artikelID4);
         System.out.println(a4);
 
-        searchWithCoreNLP.closeClient();
+        //searchWithCoreNLP.closeClient();
     }
 
 }

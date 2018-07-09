@@ -37,12 +37,8 @@ public class TestGesamt {
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         searchWithCoreNLP.startClient();
         Map ausgabe = searchWithCoreNLP.search(WAPOId);
-
         System.out.println("Gefundene Artikel:");
-
         System.out.println(ausgabe.keySet());
-
-        searchWithCoreNLP.closeClient();
 
 
     }

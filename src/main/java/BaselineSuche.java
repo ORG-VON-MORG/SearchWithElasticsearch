@@ -52,14 +52,5 @@ public class BaselineSuche {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
-
-        try {
-            searchClient.closeClient();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
