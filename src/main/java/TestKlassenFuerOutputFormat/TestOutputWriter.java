@@ -27,6 +27,8 @@ public class TestOutputWriter {
         OutputWriter outputWriter = new OutputWriter();
 
         outputWriter.receive(outputArray1);
+        outputWriter.reset();
+        outputWriter.receive(outputArray1);
         outputWriter.receive(outputArray2);
         outputWriter.printToSTDOUT();
         outputWriter.writeToFile(pfadname);

@@ -13,6 +13,9 @@ import java.io.PrintWriter;
  * 1) in eine Datei schreiben
  * 2) auf der Standardausgabe ausgeben lassen
  *
+ *
+ * TREC-Output-Format:          topicID Q0 wapoArtikelID rank score RUNTYPE
+ *
  * @author Michelle Blau, Johannes Gerwert
  * @version 09.07.2018
  */
@@ -36,12 +39,21 @@ public class OutputWriter {
      * Das Output-Format wird in dem "outputBuilder" Attribut gespeichert.
      * Das uebergebene Output-Array beinhaltet alle Daten, die für GENAU EIN Topic ermittelt wurden.
      * Das bedeutet: diese Methode muss für jedes von TREC gegebene Topic GENAU EIN MAL aufgerufen werden.
+     * Wenn unterschiedliche Topic ID's verwendet werden, wird eine Exception geworfen.
      *
      * @param outputArray Array mit "Output"-Objekten - die "Output"-Objekte beinhalten die Ergebnisse vom Information-Retrieval System für EIN Topic
      */
     public void receive(Output[] outputArray){
+    //TODO: überprüfe, ob alle topic-IDS des "Output"-Objekts gleich sind -> wirf Exception, wenn nicht
+        int topicID = outputArray[0].getTopicID();
 
-        for(int i = 0; i < outputArray.length; i++){
+        for(int i = 0; i < outputArray.length; i++) {
+            if (outputArray[i].getTopicID() != topicID) {
+                throw new RuntimeException("Die Topic-IDs müssen alle gleich sein");
+            }
+        }
+
+        for(int i= 0; i < outputArray.length; i++){
             format(outputArray[i], i+1);
         }
 
@@ -87,5 +99,9 @@ public class OutputWriter {
     public void printToSTDOUT()  {
 
         System.out.println(outputBuilder.toString());
+    }
+
+    public void reset() {
+        outputBuilder.setLength(0);
     }
 }
