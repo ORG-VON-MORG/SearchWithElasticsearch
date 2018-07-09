@@ -5,6 +5,7 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -122,7 +123,11 @@ public class SearchClient {
         QueryBuilder query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.OR))
                 .must(QueryBuilders.rangeQuery("published_date").lt(publishedDate));
-    
+
+
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Letters to the Editor" ));
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
 
         searchResponse = getSearchResultFromResponse(query);
 
