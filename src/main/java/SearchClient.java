@@ -148,7 +148,7 @@ public class SearchClient {
 
     /**
      * Methode nimmt ein QueryBuilder Objekt an und führt die Suche aus.
-     * @param query Nimmt eine Objekt vom Typ QueryBuidler entgegen
+     * @param query Nimmt eine Objekt vom Typ QueryBuilder entgegen
      * @return Gibt ein SearchResponse mit den ensprechenden Hits zurueck
      */
     public SearchResponse getSearchResultFromResponse(QueryBuilder query){
