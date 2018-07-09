@@ -56,7 +56,6 @@ public class SearchWithDocFreq {
         tmp = util.calculateIDF(WAPOId);
         idf = util.sortedMap(tmp);
 
-        System.out.println("test");
 
        Iterator <Map.Entry<String, Double>> iterator = idf.iterator();
 
@@ -77,8 +76,6 @@ public class SearchWithDocFreq {
         SearchHit[] searchHits = hits.getHits();
 
         for (SearchHit hit : searchHits) {
-            System.out.println(hit.getId());
-            System.out.println(hit.docId());
 
             String sourceAsString = hit.getSourceAsString();
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
@@ -97,7 +94,6 @@ public class SearchWithDocFreq {
             closeClient();                  //close the client from SearchWithLowLevelAPI.java
                                             //maybe later combine the two into single class(?)
 
-          //  return arrayList;
 
         }
 
