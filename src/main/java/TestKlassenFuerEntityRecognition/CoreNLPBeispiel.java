@@ -3,6 +3,10 @@ package TestKlassenFuerEntityRecognition;
 import edu.stanford.nlp.simple.Document;
 import edu.stanford.nlp.simple.Sentence;
 
+/**
+ * Diese Klasse demonstriert ein Anfangs-Beispiel für StanfordCoreNLP.
+ * Es wird ein einfacher String verwendet, aus dem die Entitäten extrahiert und auf der Standardausgabe ausgegeben werden
+ */
 public class CoreNLPBeispiel {
 
     public static void main(String[] args) {
