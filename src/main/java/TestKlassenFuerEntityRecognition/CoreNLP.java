@@ -8,6 +8,12 @@ import org.json.*;
 
 import javax.json.JsonValue;
 
+/**
+ * Diese Klasse zeigt ein kleines Beispiel zu StanfordCoreNLP: Hierbei wird ein konkreter WaPo-Artikel im JSON-Format
+ * mittels der Scanner-Klasse eingelesen.
+ * Anschließend werden alle dort gefundenen Entiäten auf der Standardausgabe ausgegeben
+ */
+
 public class CoreNLP {
 
     //-------------------------------------------------------------------------KLASSEN-KONSTANTEN

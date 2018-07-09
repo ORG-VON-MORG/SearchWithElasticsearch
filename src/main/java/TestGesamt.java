@@ -11,7 +11,7 @@ public class TestGesamt {
         //Input Artikel
         //WAPOId ist die ID der Washington Post
         String WAPOId ="34d4708d7cce27237b991c02c98eeeb5";
-       // String WAPOId ="09c0bf80-7e9e-11e6-8d0c-fb6c00c90481";
+        //String WAPOId ="09c0bf80-7e9e-11e6-8d0c-fb6c00c90481";
 
         System.out.println("Der Basis Artikel hat die ID: "+ WAPOId );
 
@@ -37,12 +37,8 @@ public class TestGesamt {
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         searchWithCoreNLP.startClient();
         Map ausgabe = searchWithCoreNLP.search(WAPOId);
-
         System.out.println("Gefundene Artikel:");
-
         System.out.println(ausgabe.keySet());
-
-        searchWithCoreNLP.closeClient();
 
 
     }

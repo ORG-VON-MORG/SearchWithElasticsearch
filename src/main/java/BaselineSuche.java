@@ -34,7 +34,7 @@ public class BaselineSuche {
 
         String titleEntities = "";
 
-        /*in dieser for-Schleife werden alle Entitaeten des title-Feldes ermittelt und in die titleEntities Variable gemacht*/
+        /*in dieser for-Schleife werden alle Entitaeten des title-Feldes ermittelt und in der "titleEntities"-Variable gespeichert*/
         for(Sentence sent: doc.sentences()){
             List<String> entityList = sent.mentions();
             for (String entity : entityList){
@@ -49,15 +49,6 @@ public class BaselineSuche {
             mapWithAllRelevantArticle= searchClient.searchArticleByStringAndDate(titleEntities,published_date);
 
             System.out.println("test");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
-
-        try {
-            searchClient.closeClient();
         } catch (IOException e) {
             e.printStackTrace();
         }
