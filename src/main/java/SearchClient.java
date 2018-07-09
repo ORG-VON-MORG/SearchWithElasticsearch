@@ -6,10 +6,14 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -20,8 +24,6 @@ public class SearchClient {
     private String index;
     private String ipAdresse;
     private int port;
-
-
 
 
 
@@ -43,7 +45,6 @@ public class SearchClient {
     public SearchClient(){
         this("localhost", 9200,"last");
 
-
     }
 
     private void connectionClient(String ipAdresse, int port){
@@ -57,14 +58,16 @@ public class SearchClient {
  */
 
     public Map getDocumentByIDIndex(String idDocument) throws IOException {
-        GetRequest getRequest = new GetRequest(index,"_doc",idDocument);
-        GetResponse getResponse = client.get(getRequest);
+        GetRequest getRequest;
+        GetResponse getResponse;
+
+
+        getRequest = new GetRequest(index,"_doc",idDocument);
+        getResponse = client.get(getRequest);
 
         if (getResponse.isExists()) {
-           // long version = getResponse.getVersion();
             String sourceAsString = getResponse.getSourceAsString();
             Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
-
 
             return sourceAsMap;
         }
@@ -80,20 +83,26 @@ public class SearchClient {
      * @param artikelID Nimmt die ArtikelID der WP entgegen
      */
 
-    public Map getArticelByWPID(String artikelID) throws IOException {
-        SearchRequest searchRequest = new SearchRequest("last");
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    public Map getArticleByWPID(String artikelID) throws IOException {
+        SearchRequest searchRequest;
+        SearchSourceBuilder searchSourceBuilder;
+        SearchResponse searchResponse;
+        SearchHit[] searchHits;
+        String documentID;
+
+        searchRequest = new SearchRequest("last");
+        searchSourceBuilder = new SearchSourceBuilder();
 
         //Beim query muss Operator AND sein, sonst findet er zu viele Artikle
         searchSourceBuilder.query(matchQuery("id",artikelID).operator(Operator.AND));
 
         searchRequest.source(searchSourceBuilder);
 
-        SearchResponse searchResponse = client.search(searchRequest);
+        searchResponse = client.search(searchRequest);
 
-        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        searchHits = searchResponse.getHits().getHits();
 
-        String documentID = searchHits[0].getId();
+        documentID = searchHits[0].getId();
 
         //ruft die getDocumentByIDIndex auf und gibt eine Map zurück. Vielleicht muss das noch geändert. Kommt
         //drauf an ob wir den Content innerhalb der Map weiter analysieren muessen.
@@ -101,22 +110,67 @@ public class SearchClient {
 
     }
 
+    public Map searchArticleByStringAndDate(String searchText, Long publishedDate) throws IOException {
+
+        HashMap<String,Map> map;
+        SearchResponse searchResponse;
+        SearchHits hits;
+        SearchHit[] searchHits;
+
+        map = new HashMap<String,Map>();
+
+        QueryBuilder query = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.OR))
+                .must(QueryBuilders.rangeQuery("published_date").lt(publishedDate));
+    
+
+        searchResponse = getSearchResultFromResponse(query);
 
 
+        hits = searchResponse.getHits();
 
+        searchHits = hits.getHits();
 
+        for (SearchHit hit : searchHits) {
+            String idDocument= hit.getId();
 
+            map.put(idDocument,getDocumentByIDIndex(idDocument));
+        }
 
+        return map;
 
+    }
 
+    /**
+     * Methode nimmt ein QueryBuilder Objekt an und führt die Suche aus.
+     * @param query Nimmt eine Objekt vom Typ QueryBuidler entgegen
+     * @return Gibt ein SearchResponse mit den ensprechenden Hits zurueck
+     */
+    public SearchResponse getSearchResultFromResponse(QueryBuilder query){
+        SearchRequest searchRequest = new SearchRequest();
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(query);
+
+        searchRequest.source(searchSourceBuilder);
+
+        try {
+            SearchResponse searchResponse = client.search(searchRequest);
+
+            return searchResponse;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
 
     /**
      * Schliesst und beendet die Verbindung
      */
-    public void CloseClient() throws IOException {
+    public void closeClient() throws IOException {
         client.close();
-
-
     }
 
 }

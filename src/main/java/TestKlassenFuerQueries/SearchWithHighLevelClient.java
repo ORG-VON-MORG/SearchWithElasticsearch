@@ -15,6 +15,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.profile.ProfileShardResult;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,19 +33,19 @@ public class SearchWithHighLevelClient {
 
     public static void main(String args[]){
 
-       SearchWithHighLevelClient searchClient = new SearchWithHighLevelClient();
+        SearchWithHighLevelClient searchClient = new SearchWithHighLevelClient();
         //searchClient.getDocumentByID("j6qkx2MBKRrm5z8MDDOZ");
 
         try {
-           // searchClient.searchAuthorWithProfiling("Evan Soltas");
-           // searchClient.searchArticleContent("Gottschalk");
-            //searchClient.getArticelByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
-            searchClient.getAllRelevant("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
+            // searchClient.searchAuthorWithProfiling("Evan Soltas");
+            // searchClient.searchArticleContent("Gottschalk");
+            //searchClient.getArticleByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
+            searchClient.getAllRelevant("b7bc4652-b997-11e1-8867-ecf6cb7935ef");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-      //  searchClient.getArticleByDate();
+        //  searchClient.getArticleByDate();
 
         //searchClient.getAllArticle();
 
@@ -117,39 +118,38 @@ public class SearchWithHighLevelClient {
 
 
         SearchHit[] searchHits = hits.getHits();
-        System.out.println("Es wurden " + hits.getTotalHits() + " Einträge gefunden");
 
-            for (SearchHit hit : searchHits) {
-                System.out.println(hit.getId());
-                System.out.println(hit.docId());
+        for (SearchHit hit : searchHits) {
+            System.out.println(hit.getId());
+            System.out.println(hit.docId());
 
-                String sourceAsString = hit.getSourceAsString();
-                Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-                String documentTitle = (String) sourceAsMap.get("title");
-
-
-                List<Object> users = (List<Object>) sourceAsMap.get("user");
-                Map<String, Object> innerObject = (Map<String, Object>) sourceAsMap.get("innerObject");
+            String sourceAsString = hit.getSourceAsString();
+            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+            String documentTitle = (String) sourceAsMap.get("title");
 
 
-                System.out.println(documentTitle);
-                System.out.println(searchHits[1].docId());
-            }
+            List<Object> users = (List<Object>) sourceAsMap.get("user");
+            Map<String, Object> innerObject = (Map<String, Object>) sourceAsMap.get("innerObject");
 
 
-            //Retrieving Profiling Results
-
-            Map<String, ProfileShardResult> profilingResults = searchResponse.getProfileResults();
-            for (Map.Entry<String, ProfileShardResult> profilingResult : profilingResults.entrySet()) {
-                String key = profilingResult.getKey();
-                ProfileShardResult profileShardResult = profilingResult.getValue();
-            }
-
-
-            System.out.println("test");
-
-
+            System.out.println(documentTitle);
+            System.out.println(searchHits[1].docId());
         }
+
+
+        //Retrieving Profiling Results
+
+        Map<String, ProfileShardResult> profilingResults = searchResponse.getProfileResults();
+        for (Map.Entry<String, ProfileShardResult> profilingResult : profilingResults.entrySet()) {
+            String key = profilingResult.getKey();
+            ProfileShardResult profileShardResult = profilingResult.getValue();
+        }
+
+
+        System.out.println("test");
+
+
+    }
 
     public void getAllArticle(){
 
@@ -235,7 +235,7 @@ public class SearchWithHighLevelClient {
 
     }
 
-    public void searchArticleContent(String text) throws IOException {
+    public SearchResponse searchArticleContent(String text) throws IOException {
         SearchRequest searchRequest = new SearchRequest("last");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
@@ -246,8 +246,7 @@ public class SearchWithHighLevelClient {
 
         SearchResponse searchResponse = client.search(searchRequest);
 
-
-        System.out.println("ttest");
+        return searchResponse;
 
 
 
@@ -272,7 +271,7 @@ public class SearchWithHighLevelClient {
         String documentID = searchHits[0].getId();
 
 
-         return getDocumentByID(documentID);
+        return getDocumentByID(documentID);
 
     }
 
@@ -285,41 +284,67 @@ public class SearchWithHighLevelClient {
         Long published_date = (Long) artikelMap.get("published_date");
 
 
-        searchArticleContent(title);
+        //searchArticleContent(title);
 
-        SearchRequest searchRequest = new SearchRequest();
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(matchQuery("contents.contentString",title));
-        searchSourceBuilder.query(rangeQuery("published_date").lte(published_date.toString()));
-        searchRequest.source(searchSourceBuilder);
-
-        SearchResponse searchResponse = client.search(searchRequest);
+        //SearchRequest searchRequest = new SearchRequest();
+        //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        //searchSourceBuilder.query(matchQuery("contents.contentString",title).operator(Operator.AND));
 
 
+        QueryBuilder query = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("contents.contentString",title).operator(Operator.AND))
+                .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
 
+        //searchSourceBuilder.query(query);
 
+        //searchRequest.source(searchSourceBuilder);
 
+        //SearchResponse searchResponse = client.search(searchRequest);
 
+        SearchResponse searchResponse = getSearchResultFromResponse(query);
 
+        // Map<String,Map> map = new Map<String,Map>();
 
-        System.out.println("test");
+        HashMap<String,Map> map= new HashMap<String,Map>();
 
+        SearchHits hits = searchResponse.getHits();
 
+        SearchHit[] searchHits = hits.getHits();
 
+        for (SearchHit hit : searchHits) {
+            String idDocument= hit.getId();
 
-
-
-
-
-
+            map.put(idDocument,getDocumentByID(idDocument));
+        }
+        //System.out.println("test");
     }
 
 
 
     private Map convertSearchHitsIntoMapWithAllArticles(SearchHit[] searchHits){
 
+        return null;
+    }
+
+
+    private SearchResponse getSearchResultFromResponse(QueryBuilder query){
+        SearchRequest searchRequest = new SearchRequest();
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(query);
+
+        searchRequest.source(searchSourceBuilder);
+
+        try {
+            SearchResponse searchResponse = client.search(searchRequest);
+
+            return searchResponse;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return null;
+
     }
 
 

@@ -21,7 +21,7 @@ public class TestSearchClientQueries{
 
             Map map = null;
             try {
-                map = sc.getArticelByWPID(artikelID);
+                map = sc.getArticleByWPID(artikelID);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -30,7 +30,8 @@ public class TestSearchClientQueries{
             System.out.println(map);
 
             try {
-                sc.CloseClient();
+
+                sc.closeClient();
             } catch (IOException e) {
                 e.printStackTrace();
             }
