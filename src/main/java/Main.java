@@ -70,7 +70,7 @@ public class Main {
         System.out.println(ausgabe);
         System.out.println(ausgabe.keySet());
 
-        searchWithCoreNLP.closeClient();
+       // searchWithCoreNLP.closeClient();
     }
 
 
