@@ -18,9 +18,10 @@ public class SearchWithDocFreq {
     /**
      * Methode nimmt ein QueryBuilder Objekt an und führt die Suche aus.
      * @param WAPOId Nimmt eine Artike-ID der Washington Post an
-     * @return Gibt eine ArrayListe mit den gefunden WAPOId's der Artikel zurueck
+     * @return Gibt eine ArrayListe mit einem String[] zurueck. An der erste Stelle im Array steht die WAPO ID. An der
+     * zweiten Stelle steht die Score.
      */
-    public ArrayList search(String WAPOId){
+    public ArrayList<String[]> search(String WAPOId){
         Map map = null;
         SearchClient searchClient;
         QueryBuilder query;
@@ -28,7 +29,7 @@ public class SearchWithDocFreq {
         List<Map.Entry<String, Double>> idf;
         HashMap<String, Double> tmp;
         SearchResponse searchResponse;
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String[]> arrayList = new ArrayList<String[]>();
         final int MAX_KEYWORDS_IN_QUERY = 5;
 
 
@@ -61,11 +62,19 @@ public class SearchWithDocFreq {
         SearchHits hits = searchResponse.getHits();
         SearchHit[] searchHits = hits.getHits();
         for (SearchHit hit : searchHits) {
+            String[] stringarray = new String[2];
+            //Konvertiert float score zu einem String
+            String score = Float.toString(hit.getScore());
+
+
 
             String sourceAsString = hit.getSourceAsString();
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            String WAPOIDofHit = (String) sourceAsMap.get("id");
-            arrayList.add(WAPOIDofHit);
+            stringarray[0] = (String) sourceAsMap.get("id");
+            stringarray[1] = score;
+
+
+            arrayList.add(stringarray);
         }
 
         return arrayList;

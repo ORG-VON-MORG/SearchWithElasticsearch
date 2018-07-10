@@ -21,7 +21,7 @@ public class TestGesamt {
 
         System.out.println("---------------TEST MIT DOC FREQ---------------");
         SearchWithDocFreq searchWithDocFreq;
-        ArrayList<String> arrayList;
+        ArrayList<String[]> arrayList;
         searchWithDocFreq = new SearchWithDocFreq();
         arrayList = searchWithDocFreq.search(WAPOId);
 

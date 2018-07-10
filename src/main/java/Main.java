@@ -40,10 +40,10 @@ public class Main {
      */
     private void erzeugeDateiFuerDoqFreqAnfrage(String zuSuchenderArtikel, int topicID) {
         SearchWithDocFreq searchWithDocFreq;
-        ArrayList<String> ergebnisListe;
+        ArrayList<String[]> ergebnisListe;
         searchWithDocFreq = new SearchWithDocFreq();
         ergebnisListe = searchWithDocFreq.search(zuSuchenderArtikel);
-        //TODO: score muss auch zurückgeliefert werden
+
         System.out.println("Gefundene Artikel:");
         System.out.println(ergebnisListe);
 
