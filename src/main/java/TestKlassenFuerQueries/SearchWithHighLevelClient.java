@@ -258,7 +258,6 @@ public class SearchWithHighLevelClient {
         //searchSourceBuilder.query(termQuery("id",ArtikelID));
 
 
-
         searchSourceBuilder.query(matchQuery("id",artikelID).operator(Operator.AND));
 
 
@@ -290,11 +289,9 @@ public class SearchWithHighLevelClient {
         //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         //searchSourceBuilder.query(matchQuery("contents.contentString",title).operator(Operator.AND));
 
-
         QueryBuilder query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery("contents.contentString",title).operator(Operator.AND))
                 .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
-
         //searchSourceBuilder.query(query);
 
         //searchRequest.source(searchSourceBuilder);
