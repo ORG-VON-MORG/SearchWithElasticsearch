@@ -17,7 +17,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-
+/**
+ * Diese Klasse bearbeiten mit alle Funktionen, die curl-Kommando auf elasticsearch index ausführen
+ */
 public class SearchWithLowLevelAPI {
 
     private static RestClient restClient;
