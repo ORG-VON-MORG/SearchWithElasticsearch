@@ -26,9 +26,9 @@ public class CoreNLPBeispiel {
             // When we ask for the lemma, it will load and run the part of speech tagger
             //  System.out.println("The second lemma of the sentence '" + sent + "' is " + sent.lemma(1));
             // When we ask for the parse, it will load and run the parser
-            System.out.println("The NER tags of the sentence are " + sent.nerTags());
+            System.out.println("The NER tags of the sentence are: " + sent.nerTags());
             // ...
-            System.out.println("The mentions of the sentence are " + sent.mentions());
+            System.out.println("The mentions of the sentence are: " + sent.mentions());
 
 
             //JSONObject contentString = get("contentString");
