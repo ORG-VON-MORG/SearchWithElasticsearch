@@ -22,7 +22,6 @@ public class Main {
     private static final String ERGEBNIS_VERZEICHNIS = ".\\src\\main\\resources\\Anfrageergebnisse";
     private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
 
-    private String ergebnisDateiname = "";
 
     /**
      * Erstellt für jede Anfrage-Art eine eigene Ergebnis-Datei, Zielverzeichnis: "..../resources/Anfrageergebenisse"
