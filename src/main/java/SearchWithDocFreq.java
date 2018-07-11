@@ -18,83 +18,63 @@ public class SearchWithDocFreq {
     /**
      * Methode nimmt ein QueryBuilder Objekt an und führt die Suche aus.
      * @param WAPOId Nimmt eine Artike-ID der Washington Post an
-     * @return Gibt eine ArrayListe mit den gefunden WAPOId's der Artikel zurueck
+     * @return Gibt eine ArrayListe mit einem String[] zurueck. An der erste Stelle im Array steht die WAPO ID. An der
+     * zweiten Stelle steht die Score.
      */
-    public ArrayList search(String WAPOId){
+    public ArrayList<String[]> search(String WAPOId){
         Map map = null;
         SearchClient searchClient;
         QueryBuilder query;
-        Long  published_date = null;
+        Long  published_date;
         List<Map.Entry<String, Double>> idf;
         HashMap<String, Double> tmp;
         SearchResponse searchResponse;
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String[]> arrayList = new ArrayList<String[]>();
         final int MAX_KEYWORDS_IN_QUERY = 5;
 
 
         searchClient = new SearchClient();      //start the client from SearchClient.java
-        startClient();                          //start the client from SearchWithLowLevelAPI.java
         try {
            map = searchClient.getArticleByWPID(WAPOId);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         //Holt Published Date vom Artikel
         published_date = (Long) map.get("published_date");
-
 
         query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
 
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Letters to the Editor" ));
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
 
         tmp = util.calculateIDF(WAPOId);
         idf = util.sortedMap(tmp);
 
-        System.out.println("test");
-
-       Iterator <Map.Entry<String, Double>> iterator = idf.iterator();
-
-
+        Iterator <Map.Entry<String, Double>> iterator = idf.iterator();
         for(int i = 0;i<=MAX_KEYWORDS_IN_QUERY;i++){
            Map.Entry<String,Double> entry = iterator.next();
            ((BoolQueryBuilder) query).should(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
-
-
         }
 
         searchResponse = searchClient.getSearchResultFromResponse(query);
-
-
         SearchHits hits = searchResponse.getHits();
-
-
         SearchHit[] searchHits = hits.getHits();
-
         for (SearchHit hit : searchHits) {
-            System.out.println(hit.getId());
-            System.out.println(hit.docId());
+            String[] stringarray = new String[2];
+            //Konvertiert float score zu einem String
+            String score = Float.toString(hit.getScore());
+
+
 
             String sourceAsString = hit.getSourceAsString();
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            String WAPOIDofHit = (String) sourceAsMap.get("id");
+            stringarray[0] = (String) sourceAsMap.get("id");
+            stringarray[1] = score;
 
 
-
-            arrayList.add(WAPOIDofHit);
-
-
-            try {
-                searchClient.closeClient();     //close the client from SearchClient.java
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            closeClient();                  //close the client from SearchWithLowLevelAPI.java
-                                            //maybe later combine the two into single class(?)
-
-          //  return arrayList;
-
+            arrayList.add(stringarray);
         }
 
         return arrayList;

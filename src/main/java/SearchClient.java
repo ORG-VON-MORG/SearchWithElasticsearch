@@ -5,6 +5,7 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -32,8 +33,6 @@ public class SearchClient {
         this.port = port;
         this.index = index;
 
-        connectionClient(ipAdresse,port);
-
     }
 
     /**
@@ -44,13 +43,22 @@ public class SearchClient {
      */
     public SearchClient(){
         this("localhost", 9200,"last");
-
     }
 
-    private void connectionClient(String ipAdresse, int port){
+    private void startClient(){
         client = new RestHighLevelClient(RestClient.builder(new HttpHost(ipAdresse, port, "http")));
     }
 
+    /**
+     * Schliesst und beendet die Verbindung
+     */
+    public void closeClient() {
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 /**
  * Die Methode gibt ein Artikel aus dem Index zurück
@@ -58,21 +66,22 @@ public class SearchClient {
  */
 
     public Map getDocumentByIDIndex(String idDocument) throws IOException {
+        startClient();
         GetRequest getRequest;
         GetResponse getResponse;
 
 
         getRequest = new GetRequest(index,"_doc",idDocument);
         getResponse = client.get(getRequest);
+        Map<String, Object> sourceAsMap = null;
 
         if (getResponse.isExists()) {
             String sourceAsString = getResponse.getSourceAsString();
-            Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
-
-            return sourceAsMap;
+            sourceAsMap = getResponse.getSourceAsMap();
         }
 
-        return null;
+        closeClient();
+        return sourceAsMap;
 
     }
 
@@ -84,6 +93,7 @@ public class SearchClient {
      */
 
     public Map getArticleByWPID(String artikelID) throws IOException {
+        startClient();
         SearchRequest searchRequest;
         SearchSourceBuilder searchSourceBuilder;
         SearchResponse searchResponse;
@@ -91,19 +101,17 @@ public class SearchClient {
         String documentID;
 
         searchRequest = new SearchRequest("last");
+        searchRequest.types("_doc");
         searchSourceBuilder = new SearchSourceBuilder();
 
         //Beim query muss Operator AND sein, sonst findet er zu viele Artikle
         searchSourceBuilder.query(matchQuery("id",artikelID).operator(Operator.AND));
-
         searchRequest.source(searchSourceBuilder);
-
         searchResponse = client.search(searchRequest);
-
         searchHits = searchResponse.getHits().getHits();
-
         documentID = searchHits[0].getId();
 
+        closeClient();
         //ruft die getDocumentByIDIndex auf und gibt eine Map zurück. Vielleicht muss das noch geändert. Kommt
         //drauf an ob wir den Content innerhalb der Map weiter analysieren muessen.
         return getDocumentByIDIndex(documentID);
@@ -122,7 +130,11 @@ public class SearchClient {
         QueryBuilder query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery("contents.contentString",searchText).operator(Operator.OR))
                 .must(QueryBuilders.rangeQuery("published_date").lt(publishedDate));
-    
+
+
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Letters to the Editor" ));
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
 
         searchResponse = getSearchResultFromResponse(query);
 
@@ -132,9 +144,10 @@ public class SearchClient {
         searchHits = hits.getHits();
 
         for (SearchHit hit : searchHits) {
-            String idDocument= hit.getId();
-
-            map.put(idDocument,getDocumentByIDIndex(idDocument));
+            String elasticIdDocument= hit.getId();
+            Map<String, Object> document = getDocumentByIDIndex(elasticIdDocument);
+            String artikelId = (String)document.get("id");
+            map.put(artikelId, document);
         }
 
         return map;
@@ -147,30 +160,24 @@ public class SearchClient {
      * @return Gibt ein SearchResponse mit den ensprechenden Hits zurueck
      */
     public SearchResponse getSearchResultFromResponse(QueryBuilder query){
-        SearchRequest searchRequest = new SearchRequest();
+        startClient();
+        SearchRequest searchRequest = new SearchRequest("last");
+        searchRequest.types("_doc");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(query);
 
         searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = null;
 
         try {
-            SearchResponse searchResponse = client.search(searchRequest);
-
-            return searchResponse;
+            searchResponse = client.search(searchRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        closeClient();
+        return searchResponse;
 
-        return null;
-
-    }
-
-    /**
-     * Schliesst und beendet die Verbindung
-     */
-    public void closeClient() throws IOException {
-        client.close();
     }
 
 }

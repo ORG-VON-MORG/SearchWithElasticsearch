@@ -45,6 +45,8 @@ public class BoostSearch {
 
 
 
+
+
            //artikel.forEach((k,v)->((BoolQueryBuilder) query).must(QueryBuilders.matchQuery("contents.contentString", k).boost(v)));
 
 
