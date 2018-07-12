@@ -1,6 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import OutputFormatTrec_Eval.Output;
+import OutputFormatTrec_Eval.OutputWriter;
+
+import java.io.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -16,64 +17,111 @@ import java.io.IOException;
 
 public class Main {
 
-    //WICHTIG: DIESE METHODE BETRACHTET NUR EIN TOPIC VON TREC, JEDOCH MÜSSEN WIR MEHRERE BETRACHTEN
+
+    private static final String TOPIC_VERZEICHNIS    = ".\\src\\main\\resources\\TREC-TOPICS";
+    private static final String ERGEBNIS_VERZEICHNIS = ".\\src\\main\\resources\\Anfrageergebnisse";
+    private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
+
+    private String ergebnisDateiname = "";
+
+    /**
+     * Erstellt für jede Anfrage-Art eine eigene Ergebnis-Datei, Zielverzeichnis: "..../resources/Anfrageergebenisse"
+     * Liest dazu die entsprechenden Topics im Verzeichnis "..../resources/TREC-TOPICS"
+     *
+     * @throws IOException
+     */
     private void start() throws IOException{
-        //TODO: Methode bauen, die aus den gegebenen Topics die topicIDs und die wapoArtikelIDs extrahiert. Die wapoArtikelID ist von dem Artikel, für den Kontextinformationen gesucht werden.
-        //Die Topics von TREC sind im XML-Format
-        String wapoArtikelID = "34d4708d7cce27237b991c02c98eeeb5";
-        int topicID = 1;
-        String filepath  = "...";
+        File   topicVerzeichnis        = new File(TOPIC_VERZEICHNIS).getCanonicalFile();
+        File[] alleTopicsImVerzeichnis = topicVerzeichnis.listFiles();
 
-        erzeugeDateiFuerDoqFreqAnfrage(wapoArtikelID, topicID);
-        erzeugeDateiFuerCoreNLPAnfrage(wapoArtikelID, topicID);
-        readfromXML(filepath);
+        for(File topic : alleTopicsImVerzeichnis) {
+            HashMap<Integer, String> mapMitDatenAusTopicDatei = readfromXML(topic.toString());
+            Set<Integer>             alleTopicIDs             = mapMitDatenAusTopicDatei.keySet();
 
+            OutputWriter outputWriterDocFreq = new OutputWriter();
+            //OutputWriter outputWriterCoreNLP = new OutputWriter();
+
+            for(Integer topicID : alleTopicIDs) {
+                String wapoArtikelID = mapMitDatenAusTopicDatei.get(topicID);
+
+                if(stringIstNichtLeer(wapoArtikelID)){
+
+                    fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
+                    //fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP); //das hier ist noch nicht fertig
+                }
+            }
+            //TODO: dieser Teil hier sollte lesbarer gemacht werden
+            outputWriterDocFreq.printToSTDOUT();
+            outputWriterDocFreq.writeToFile(ERGEBNIS_VERZEICHNIS_DOCFREQ +"DocFreq_" + erzeugeDateiName(topic.getName()));
+            outputWriterDocFreq.reset();
+            //outputWriterCoreNLP.printToSTDOUT();
+            //outputWriterCoreNLP.reset();
+        }
     }
 
 
+
     /**
-     * Erstellt für einen gegebenen Artikel eine Datei "blablablaVerzeichnisblabla", die die DoqFreq-Anfrage-Ergebnisse
-     * im TREC-Output-Format enthält
+     * Führt für die gegebene ArtikelID die DocFreq-Anfrage aus und speichert die Ergebnisse im "outputWriter".
      *
      * @param zuSuchenderArtikel wapoArtikelID, für die die Kontextsuche ausgeführt wird
-     * @param topicID            TopicID von TREC
+     * @param outputWriter sammelt die Anfrage-Ergebnisse
+     * @param topicID TopicID von TREC
      */
-    private void erzeugeDateiFuerDoqFreqAnfrage(String zuSuchenderArtikel, int topicID) {
+    private void fuelleOutputWriterMitDocFreqAnfrage(String zuSuchenderArtikel, int topicID, OutputWriter outputWriter) {
         SearchWithDocFreq searchWithDocFreq;
         ArrayList<String[]> ergebnisListe;
         searchWithDocFreq = new SearchWithDocFreq();
         ergebnisListe = searchWithDocFreq.search(zuSuchenderArtikel);
 
-        System.out.println("Gefundene Artikel:");
-        System.out.println(ergebnisListe);
+        //(ergebnisListe.get(0)[0]) -> artikelID als string
+        //(ergebnisListe.get(0)[1]) -> score als string
 
+        Output[] outputArray = new Output[ergebnisListe.size()];
+
+        for(int i = 0; i < ergebnisListe.size(); i++){
+            String[] artikelIDUndScore = ergebnisListe.get(i);
+            String artikelID = artikelIDUndScore[0];
+            double score = Double.parseDouble(artikelIDUndScore[1]);
+
+            outputArray[i] = new Output(topicID, artikelID, score);
+        }
+        outputWriter.receive(outputArray);
     }
 
 
     /**
-     * Erstellt für einen gegebenen Artikel eine Datei "blablablaVerzeichnisblabla", die die CoreNLP-Anfrage-Ergebnisse
-     * im TREC-Output-Format enthält
-     *
+     * Führt für die gegebene ArtikelID die CoreNLP-Anfrage aus und speichert die Ergebnisse im "outputWriter".
+     * TODO: fertig implementieren, sobald die CoreNLP-Anfrage fertiggestellt ist
      * @param zuSuchenderArtikel wapoArtikelID, für die die Kontextsuche ausgeführt wird
-     * @param topicID            TopicID von TREC
+     * @param outputWriter sammelt die Anfrage-Ergebnisse
+     * @param topicID TopicID von TREC
      */
-    private void erzeugeDateiFuerCoreNLPAnfrage(String zuSuchenderArtikel, int topicID) {
+    private void fuelleOutputWriterMitCoreNLPAnfrage(String zuSuchenderArtikel, int topicID, OutputWriter outputWriter) {
+        //TODO: eine Datenstruktur von der CoreNLP-Anfrage zurückgeben lassen, die die Artikel in der richtigen Reihenfolge enthält UND deren Scores
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         searchWithCoreNLP.startClient();
 
-        Map ausgabe = searchWithCoreNLP.search(zuSuchenderArtikel);
-        Set ergebnisMenge = ausgabe.keySet();
-        //List ergebnisListe = Arrays.asList(ergebnisMenge.toArray());
+        Map ergebnisMap = searchWithCoreNLP.search(zuSuchenderArtikel);
+        Set ergebnisMenge = ergebnisMap.keySet();
 
-        //TODO: score muss auch zurückgeliefert werden
+
+
         System.out.println("Gefundene Artikel:");
-        System.out.println(ausgabe);
-        System.out.println(ausgabe.keySet());
+        System.out.println(ergebnisMap);
+        System.out.println(ergebnisMenge);
 
-       // searchWithCoreNLP.closeClient();
+
     }
 
-
+    /**
+     * TODO: Kommentar einfügen
+     *
+     * @author Kevin Engelhardt
+     * @param filepath
+     * @return
+     * @throws IOException
+     */
     public HashMap<Integer, String> readfromXML(String filepath) throws IOException {
         HashMap<Integer, String> hsm = new HashMap<Integer, String>();
         BufferedReader br = new BufferedReader(new FileReader(filepath));
@@ -106,10 +154,48 @@ public class Main {
                 hsm.put(num, id);
             }
         }
-        System.out.println(hsm);
+        //System.out.println(hsm);
         return hsm;
     }
 
+
+    /**
+     * Prüft, ob ein übergebener String nicht leer ist.
+     *
+     * @param string zu überprüfender String
+     * @return true falls der "string" nicht leer ist, sonst false
+     */
+    private boolean stringIstNichtLeer(String string){
+        if (!(string.trim().isEmpty())){
+            return true;
+
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * Erzeugt zum uebergebenen TREC-Topic-Dateinamen eine passende Dateiendung ohne die Zeichenfolge ".xml"
+     *
+     * @param topicDateiname
+     * @return einen Dateinamen, der die Zeichenfolge ".xml" nicht enthält
+     */
+    private String erzeugeDateiName(String topicDateiname) {
+        if (topicDateiname.contains(".xml")) {
+            topicDateiname = topicDateiname.replaceAll("\\.xml","");
+        }
+        topicDateiname = topicDateiname + ".txt";
+
+        return topicDateiname;
+    }
+
+
+    /**
+     * Starten des Programms
+     *
+     * @param args wird nicht beachtet
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException{
         new Main().start();
     }

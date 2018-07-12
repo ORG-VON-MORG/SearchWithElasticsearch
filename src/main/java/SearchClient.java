@@ -36,8 +36,8 @@ public class SearchClient {
     }
 
     /**
-     * Default Kontruktor. Der SearchClient wird mit den default Werten initialisiert.
-     * IP-Adresse: locahost
+     * Default Konstruktor. Der SearchClient wird mit den default Werten initialisiert.
+     * IP-Adresse: localhost
      * Port: 9200
      * Index: last
      */

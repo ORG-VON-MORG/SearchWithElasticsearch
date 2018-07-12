@@ -14,6 +14,12 @@ public class TestOutputWriter {
 
     private final String pfadname = ".\\src\\main\\java\\TestKlassenFuerOutputFormat\\testOutput.txt";
 
+    /**
+     * Legt Output-Array zum Testen an und verarbeitet dieses Array mit Hilfe eines "OutputWriter"-Objekts
+     * Erzeugt eine Datei im TREC-Output-Format
+     *
+     * @throws IOException
+     */
     public void start() throws IOException {
         Output output1 = new Output(1, "abc",1.5);
         Output output2 = new Output(1, "def",1.2);
@@ -32,6 +38,7 @@ public class TestOutputWriter {
         outputWriter.receive(outputArray2);
         outputWriter.printToSTDOUT();
         outputWriter.writeToFile(pfadname);
+        System.out.println(pfadname);
     }
 
 
