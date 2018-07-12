@@ -5,7 +5,6 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.collect.HppcMaps;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -29,7 +28,7 @@ public class BoostSearch {
 
     public void start() {
 
-        HashMap<String,int[]> map = getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8", "contents.contentString");
+        HashMap<String,int[]> map = getWordsFrequencies("C7BVyGMBKRrm5z8MDDI8");
         this.getArticlesByBoostSearch(map,1374190070000L);
 
     }
