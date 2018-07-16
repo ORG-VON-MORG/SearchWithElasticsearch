@@ -45,9 +45,11 @@ public class SearchWithDocFreq {
         query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
 
-        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opinion" ));
+
+
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
         ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Letters to the Editor" ));
-        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opinion" ));
+        ((BoolQueryBuilder) query).mustNot(QueryBuilders.matchQuery("contents.kicker","Opionion" ));
 
         tmp = util.calculateIDF(WAPOId);
         idf = util.sortedMap(tmp);
