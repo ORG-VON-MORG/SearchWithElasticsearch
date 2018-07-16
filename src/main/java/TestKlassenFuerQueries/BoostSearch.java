@@ -17,7 +17,9 @@ import java.util.Map;
 
 import static TestKlassenFuerQueries.SearchWithLowLevelAPI.getWordsFrequencies;
 
+
 public class BoostSearch {
+
 
 
 
@@ -37,10 +39,13 @@ public class BoostSearch {
            RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
            SearchRequest searchRequest = new SearchRequest();
 
+
            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
            final QueryBuilder query = QueryBuilders.boolQuery()
                   // .must(QueryBuilders.matchQuery("contents.contentString",title).boost(3))//operator(Operator.AND))
-                   .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
+                   //.must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
+                  //  .must(QueryBuilders.rangeQuery("published_date").from(published_date).to((published_date - 94670856000L)));
+                    .must(QueryBuilders.rangeQuery("published_date").from(published_date).to((published_date - 31556952000L)));
 
 
 

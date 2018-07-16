@@ -19,7 +19,7 @@ public class Main {
 
 
     private static final String TOPIC_VERZEICHNIS    = ".\\src\\main\\resources\\TREC-TOPICS";
-    private static final String ERGEBNIS_VERZEICHNIS = ".\\src\\main\\resources\\Anfrageergebnisse";
+    private static final String ERGEBNIS_VERZEICHNIS = ".\\ypsrc\\main\\resources\\Anfrageergebnisse";
     private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
 
 

@@ -141,6 +141,14 @@ public class util {
     }
 
 
+    /**
+     *
+     * @param filepath wird entgegengenommen, Methode liest XML Dokument aus
+     * @return Hashmap mit gegebener Nummer und DocID
+     * @throws IOException
+     * @author Kevin Engelhardt
+     */
+
     public HashMap<Integer, String> readfromXML(String filepath) throws IOException {
         HashMap<Integer, String> hsm = new HashMap<Integer, String>();
         BufferedReader br = new BufferedReader(new FileReader(filepath));
@@ -165,14 +173,15 @@ public class util {
                     String docId = line.replace("<docid>", "").replace("</docid>", "").replace(" ", "");
                     id = docId;
                 }
+                hsm.put(num, id);
 
                 // Falls <top> und </top> in der selben Zeile sind, wieder auf false setzen
                 if (line.contains("</top>")) {
                     insideTop = false;
                 }
-                hsm.put(num, id);
             }
         }
         return hsm;
     }
+
 }
