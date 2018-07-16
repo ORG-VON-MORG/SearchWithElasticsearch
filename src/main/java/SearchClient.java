@@ -42,7 +42,7 @@ public class SearchClient {
      * Index: last
      */
     public SearchClient(){
-        this("localhost", 9200,"last");
+        this("localhost", 9200,"final");
     }
 
     private void startClient(){
@@ -100,7 +100,7 @@ public class SearchClient {
         SearchHit[] searchHits;
         String documentID;
 
-        searchRequest = new SearchRequest("last");
+        searchRequest = new SearchRequest("final");
         searchRequest.types("_doc");
         searchSourceBuilder = new SearchSourceBuilder();
 
@@ -161,7 +161,7 @@ public class SearchClient {
      */
     public SearchResponse getSearchResultFromResponse(QueryBuilder query){
         startClient();
-        SearchRequest searchRequest = new SearchRequest("last");
+        SearchRequest searchRequest = new SearchRequest("final");
         searchRequest.types("_doc");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
