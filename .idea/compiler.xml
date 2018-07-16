@@ -9,5 +9,8 @@
         <module name="Zeitungsartikel" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Zeitungsartikel" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
