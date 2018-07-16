@@ -43,7 +43,7 @@ public class util {
         HashMap<String, Double> idf = new HashMap<String, Double>();
 
 
-        mapDocFreq = getWordsFrequencies(WAPOId, "contents.contentString");
+        mapDocFreq = getWordsFrequencies(WAPOId);
 
         //it = mapDocFreq.entrySet().iterator();
 

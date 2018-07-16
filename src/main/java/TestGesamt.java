@@ -26,7 +26,8 @@ public class TestGesamt {
         arrayList = searchWithDocFreq.search(WAPOId);
 
         System.out.println("Gefundene Artikel:");
-        System.out.println(arrayList);
+        for(String[] arr : arrayList)
+            System.out.println("id: " + arr[0] + "\tscore :" + arr[1]);
 
 
 
