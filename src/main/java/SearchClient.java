@@ -26,7 +26,8 @@ public class SearchClient {
     private String ipAdresse;
     private int port;
 
-
+    //Gibt die Anzahl der Ergebnis im Ergebnis Array an
+    private final int sizeResult =100;
 
     public SearchClient(String ipAdresse, int port, String index) {
         this.ipAdresse = ipAdresse;
@@ -164,7 +165,8 @@ public class SearchClient {
         SearchRequest searchRequest = new SearchRequest("final");
         searchRequest.types("_doc");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
+        //Anzahl der Hit in der Map
+        searchSourceBuilder.size(sizeResult);
         searchSourceBuilder.query(query);
 
         searchRequest.source(searchSourceBuilder);
