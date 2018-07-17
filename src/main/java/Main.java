@@ -19,8 +19,9 @@ public class Main {
 
 
     private static final String TOPIC_VERZEICHNIS    = ".\\src\\main\\resources\\TREC-TOPICS";
-    private static final String ERGEBNIS_VERZEICHNIS = ".\\ypsrc\\main\\resources\\Anfrageergebnisse";
+    private static final String ERGEBNIS_VERZEICHNIS = ".\\src\\main\\resources\\Anfrageergebnisse";
     private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
+    private static final String ERGEBNIS_VERZEICHNIS_CORENLP = ".\\src\\main\\resources\\Anfrageergebnisse\\CoreNLP\\";
 
 
     /**
@@ -38,7 +39,7 @@ public class Main {
             Set<Integer>             alleTopicIDs             = mapMitDatenAusTopicDatei.keySet();
 
             OutputWriter outputWriterDocFreq = new OutputWriter();
-            //OutputWriter outputWriterCoreNLP = new OutputWriter();
+            OutputWriter outputWriterCoreNLP = new OutputWriter();
 
             for(Integer topicID : alleTopicIDs) {
                 String wapoArtikelID = mapMitDatenAusTopicDatei.get(topicID);
@@ -46,15 +47,17 @@ public class Main {
                 if(stringIstNichtLeer(wapoArtikelID)){
 
                     fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
-                    //fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP); //das hier ist noch nicht fertig
+                    fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
                 }
             }
             //TODO: dieser Teil hier sollte lesbarer gemacht werden
             outputWriterDocFreq.printToSTDOUT();
             outputWriterDocFreq.writeToFile(ERGEBNIS_VERZEICHNIS_DOCFREQ +"DocFreq_" + erzeugeDateiName(topic.getName()));
             outputWriterDocFreq.reset();
-            //outputWriterCoreNLP.printToSTDOUT();
-            //outputWriterCoreNLP.reset();
+
+            outputWriterCoreNLP.printToSTDOUT();
+            outputWriterCoreNLP.writeToFile(ERGEBNIS_VERZEICHNIS_CORENLP +"CoreNLP_" + erzeugeDateiName(topic.getName()));
+            outputWriterCoreNLP.reset();
         }
     }
 
@@ -89,29 +92,36 @@ public class Main {
     }
 
 
+
     /**
      * Führt für die gegebene ArtikelID die CoreNLP-Anfrage aus und speichert die Ergebnisse im "outputWriter".
-     * TODO: fertig implementieren, sobald die CoreNLP-Anfrage fertiggestellt ist
+     *
      * @param zuSuchenderArtikel wapoArtikelID, für die die Kontextsuche ausgeführt wird
      * @param outputWriter sammelt die Anfrage-Ergebnisse
      * @param topicID TopicID von TREC
      */
     private void fuelleOutputWriterMitCoreNLPAnfrage(String zuSuchenderArtikel, int topicID, OutputWriter outputWriter) {
-        //TODO: eine Datenstruktur von der CoreNLP-Anfrage zurückgeben lassen, die die Artikel in der richtigen Reihenfolge enthält UND deren Scores
+
+        ArrayList<String[]> ergebnisListe;
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         searchWithCoreNLP.startClient();
 
-        Map ergebnisMap = searchWithCoreNLP.search(zuSuchenderArtikel);
-        Set ergebnisMenge = ergebnisMap.keySet();
+        ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
 
+        Output[] outputArray = new Output[ergebnisListe.size()];
 
+        for(int i = 0; i < ergebnisListe.size(); i++){
+            String[] artikelIDUndScore = ergebnisListe.get(i);
+            String artikelID = artikelIDUndScore[0];
+            double score = Double.parseDouble(artikelIDUndScore[1]);
 
-        System.out.println("Gefundene Artikel:");
-        System.out.println(ergebnisMap);
-        System.out.println(ergebnisMenge);
+            outputArray[i] = new Output(topicID, artikelID, score);
+        }
 
-
+        outputWriter.receive(outputArray);
     }
+
+
 
     /**
      * TODO: Kommentar einfügen

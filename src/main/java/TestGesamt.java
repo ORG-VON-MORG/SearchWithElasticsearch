@@ -34,13 +34,15 @@ public class TestGesamt {
 
         //--------------------------Test SUCHE MIT CORENLP--------------------------
 
+        ArrayList<String[]> arrayListCORENLP = new ArrayList<String[]>();
         System.out.println("---------------TEST MIT CORENLP---------------");
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         searchWithCoreNLP.startClient();
-        Map ausgabe = searchWithCoreNLP.search(WAPOId);
+        arrayListCORENLP = searchWithCoreNLP.search(WAPOId);
         System.out.println("Gefundene Artikel:");
-        System.out.println(ausgabe.keySet());
 
+        for(String[] arr : arrayList)
+            System.out.println("id: " + arr[0] + "\tscore :" + arr[1]);
 
     }
 

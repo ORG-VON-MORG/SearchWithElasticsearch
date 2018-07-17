@@ -44,8 +44,8 @@ public class SearchWithDocFreq {
 
         query = QueryBuilders.boolQuery()
                // .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
-               .must(QueryBuilders.rangeQuery("published_date").from(published_date - 31556952000L).to((published_date)));
-             //    .must(QueryBuilders.rangeQuery("published_date").from(published_date - 94670856000L).to((published_date)));
+               //.must(QueryBuilders.rangeQuery("published_date").from(published_date - 31556952000L).to((published_date)));
+                 .must(QueryBuilders.rangeQuery("published_date").from(published_date - 94670856000L).to((published_date -1L)));
 
 
 
@@ -69,7 +69,6 @@ public class SearchWithDocFreq {
             String[] stringarray = new String[2];
             //Konvertiert float score zu einem String
             String score = Float.toString(hit.getScore());
-
 
 
             String sourceAsString = hit.getSourceAsString();
