@@ -71,7 +71,6 @@ public class SearchWithDocFreq {
             String score = Float.toString(hit.getScore());
 
 
-
             String sourceAsString = hit.getSourceAsString();
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
             stringarray[0] = (String) sourceAsMap.get("id");

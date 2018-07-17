@@ -14,6 +14,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,8 +120,8 @@ public class SearchClient {
 
     }
 
-    public Map searchArticleByStringAndDate(String searchText, Long publishedDate) throws IOException {
-
+    public ArrayList<String[]> searchArticleByStringAndDate(String searchText, Long publishedDate) throws IOException {
+        ArrayList<String[]> arrayList = new ArrayList<String[]>();
         HashMap<String,Map> map;
         SearchResponse searchResponse;
         SearchHits hits;
@@ -145,13 +146,28 @@ public class SearchClient {
         searchHits = hits.getHits();
 
         for (SearchHit hit : searchHits) {
-            String elasticIdDocument= hit.getId();
-            Map<String, Object> document = getDocumentByIDIndex(elasticIdDocument);
-            String artikelId = (String)document.get("id");
-            map.put(artikelId, document);
+            String[] stringarray = new String[2];
+
+            //Konvertiert float score zu einem String
+            String score = Float.toString(hit.getScore());
+
+            //----------ALTER CODE-------------
+            //Kann geloscht werden, wenn alles funktioniert
+            //String elasticIdDocument= hit.getId();
+           // Map<String, Object> document = getDocumentByIDIndex(elasticIdDocument);
+            //String artikelId = (String)document.get("id");
+            //map.put(artikelId, document);
+
+            String sourceAsString = hit.getSourceAsString();
+            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+            stringarray[0] = (String) sourceAsMap.get("id");
+            stringarray[1] = score;
+
+
+            arrayList.add(stringarray);
         }
 
-        return map;
+        return arrayList;
 
     }
 
