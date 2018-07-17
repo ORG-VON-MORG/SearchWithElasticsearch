@@ -92,7 +92,7 @@ public class SearchWithDocFreq {
         }
         for (result r : results) {
             arrayList.add(new String[]{r.getId(), r.getScore().toString()});
-            //System.out.println(r.getTitle());
+            //System.out.println(r.getTitle());      //for testing
         }
         return arrayList;
     }
