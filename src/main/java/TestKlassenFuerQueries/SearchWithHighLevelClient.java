@@ -39,7 +39,7 @@ public class SearchWithHighLevelClient {
         try {
             // searchClient.searchAuthorWithProfiling("Evan Soltas");
             // searchClient.searchArticleContent("Gottschalk");
-            //searchClient.getArticleByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
+            // searchClient.getArticelByWPID("35f30c00-efdd-11e2-a1f9-ea873b7e0424");
             searchClient.getAllRelevant("b7bc4652-b997-11e1-8867-ecf6cb7935ef");
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,7 +57,7 @@ public class SearchWithHighLevelClient {
 
     public Map getDocumentByID(String idOfDocument){
 
-        GetRequest getRequest = new GetRequest("last", "_doc", idOfDocument);
+        GetRequest getRequest = new GetRequest("final", "_doc", idOfDocument);
         try {
             GetResponse getResponse = client.get(getRequest);
 
@@ -236,7 +236,7 @@ public class SearchWithHighLevelClient {
     }
 
     public SearchResponse searchArticleContent(String text) throws IOException {
-        SearchRequest searchRequest = new SearchRequest("last");
+        SearchRequest searchRequest = new SearchRequest("final");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         //searchSourceBuilder.query(matchQuery("contents", text));
@@ -253,7 +253,7 @@ public class SearchWithHighLevelClient {
     }
 
     public Map getArticelByWPID(String artikelID) throws IOException {
-        SearchRequest searchRequest = new SearchRequest("last");
+        SearchRequest searchRequest = new SearchRequest("final");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         //searchSourceBuilder.query(termQuery("id",ArtikelID));
 

@@ -19,7 +19,7 @@ public class Main {
 
 
     private static final String TOPIC_VERZEICHNIS    = ".\\src\\main\\resources\\TREC-TOPICS";
-    private static final String ERGEBNIS_VERZEICHNIS = ".\\src\\main\\resources\\Anfrageergebnisse";
+    private static final String ERGEBNIS_VERZEICHNIS = ".\\ypsrc\\main\\resources\\Anfrageergebnisse";
     private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
 
 
@@ -98,17 +98,17 @@ public class Main {
      */
     private void fuelleOutputWriterMitCoreNLPAnfrage(String zuSuchenderArtikel, int topicID, OutputWriter outputWriter) {
         //TODO: eine Datenstruktur von der CoreNLP-Anfrage zurückgeben lassen, die die Artikel in der richtigen Reihenfolge enthält UND deren Scores
+        ArrayList<String[]> arrayList;
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         searchWithCoreNLP.startClient();
 
-        Map ergebnisMap = searchWithCoreNLP.search(zuSuchenderArtikel);
-        Set ergebnisMenge = ergebnisMap.keySet();
+        arrayList = searchWithCoreNLP.search(zuSuchenderArtikel);
+
 
 
 
         System.out.println("Gefundene Artikel:");
-        System.out.println(ergebnisMap);
-        System.out.println(ergebnisMenge);
+        System.out.println(arrayList);
 
 
     }

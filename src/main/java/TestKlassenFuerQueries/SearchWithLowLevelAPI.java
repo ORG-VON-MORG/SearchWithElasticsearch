@@ -23,6 +23,7 @@ import org.json.JSONObject;
 public class SearchWithLowLevelAPI {
 
     private static RestClient restClient;
+    private static final String indexName = "final";
 
     public static void startClient() {
         restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
@@ -41,17 +42,18 @@ public class SearchWithLowLevelAPI {
      * @return docsCount
      */
    public static long getDocsCount() {
-       Map<String, String> params = Collections.emptyMap();
-       HttpEntity entity = new NStringEntity("", ContentType.TEXT_PLAIN);
+       String endpoint              = indexName + "/_stats";
+       Map<String, String> params   = Collections.emptyMap();
+       HttpEntity entity            = new NStringEntity("", ContentType.TEXT_PLAIN);
        try {
            startClient();
-           Response response = restClient.performRequest("GET", "_stats/docs?pretty", params, entity);
-           String responseBody = EntityUtils.toString(response.getEntity());
-           long docsCount = new JSONObject(responseBody)
-                                    .getJSONObject("_all")
-                                    .getJSONObject("primaries")
-                                    .getJSONObject("docs")
-                                    .getLong("count");
+           Response response        = restClient.performRequest("GET", endpoint, params, entity);
+           String responseBody      = EntityUtils.toString(response.getEntity());
+           long docsCount           = new JSONObject(responseBody)
+                                            .getJSONObject("_all")
+                                            .getJSONObject("primaries")
+                                            .getJSONObject("docs")
+                                            .getLong("count");
            closeClient();
            return docsCount;
        } catch (IOException e) {
@@ -67,21 +69,22 @@ public class SearchWithLowLevelAPI {
      * @return elasticId
      */
    private static String getElasticIdFromArtikelId(String artikelId) {
-       Map<String, String> params = Collections.emptyMap();
-       String json = "{\"_source\":[\"_id\"],"       +
-                      "\"query\":"                   +
-                                "{\"match\":"        +
-                                        "{\"id\":\"" + artikelId + "\"}}}";
-       HttpEntity entity = new NStringEntity(json, APPLICATION_JSON);
+       Map<String, String> params   = Collections.emptyMap();
+       String endpoint              = indexName + "/_doc/_search";
+       String json                  = "{\"_source\":[\"_id\"],"       +
+                                       "\"query\":"                   +
+                                                 "{\"match\":"        +
+                                                    "{\"id\":\"" + artikelId + "\"}}}";
+       HttpEntity entity            = new NStringEntity(json, APPLICATION_JSON);
        try {
            startClient();
-           Response response = restClient.performRequest("GET", "last/_doc/_search?pretty", params, entity);
-           String responseBody = EntityUtils.toString(response.getEntity());
-           String elasticId = new JSONObject(responseBody)
-                                    .getJSONObject("hits")
-                                    .getJSONArray("hits")
-                                    .getJSONObject(0)
-                                    .getString("_id");
+           Response response        = restClient.performRequest("GET", endpoint, params, entity);
+           String responseBody      = EntityUtils.toString(response.getEntity());
+           String elasticId         = new JSONObject(responseBody)
+                                            .getJSONObject("hits")
+                                            .getJSONArray("hits")
+                                            .getJSONObject(0)
+                                            .getString("_id");
            closeClient();
            return elasticId;
        } catch (IOException e) {
@@ -95,18 +98,19 @@ public class SearchWithLowLevelAPI {
      * @param elasticId die elasticId von bestimmte artikel
      * @return Liste, die alle content.contentString enthält
      */
-    private static List<String> getCleanContentString(String elasticId){
+    private static List<String> getCleanContentString(String elasticId) {
         List<String> contentStringList   = new ArrayList<String>();
-        Map<String, String> params       = Collections.emptyMap();
+        String endpoint                  = indexName + "/_doc/" + elasticId;
+        Map<String, String> params       = new HashMap<String, String>();
+        params.put("_source_include", "contents.contentString");
         HttpEntity entity                = new NStringEntity("", ContentType.TEXT_PLAIN);
         try {
             startClient();
-            String endpoint      = "last/_doc/" + elasticId + "?_source_include=contents.contentString&pretty";
-            Response response    = restClient.performRequest("GET", endpoint, params, entity);
-            String responseBody  = EntityUtils.toString(response.getEntity());
-            JSONArray content    = new JSONObject(responseBody)
-                    .getJSONObject("_source")
-                    .getJSONArray("contents");
+            Response response            = restClient.performRequest("GET", endpoint, params, entity);
+            String responseBody          = EntityUtils.toString(response.getEntity());
+            JSONArray content            = new JSONObject(responseBody)
+                                                 .getJSONObject("_source")
+                                                 .getJSONArray("contents");
             //put every content.contentString field into the List
             for (int i = 0; i < content.length(); i++) {
                 String paragraph = util.removeStopWords(
@@ -129,43 +133,44 @@ public class SearchWithLowLevelAPI {
      *                    wie oft das Wort insgesamt vorkommt und
      *                    wie oft das Wort im angegebenen Artikel(nach Artikel ID) vorkommt
      * @param artikelId Zeitungsartikel ID
-     * @param field field in JSON-Datei, in dem die Funktion die Wörter suche
      * @return wordFreq
      */
-   public static HashMap<String, int[]> getWordsFrequencies(String artikelId, String field) {
+   public static HashMap<String, int[]> getWordsFrequencies(String artikelId) {
+       HashMap<String, int[]> wordFreq  = new HashMap<String, int[]>();
        String elasticId                 = getElasticIdFromArtikelId(artikelId);
        List<String> paragraph           = getCleanContentString(elasticId);
+
+       String endpoint                  = indexName + "/_doc/_termvector";
        Map<String, String> params       = Collections.emptyMap();
-       HashMap<String, int[]> wordFreq  = new HashMap<String, int[]>();
        startClient();
 
        //iterate over all content.contentString field
        //this for loop will create artificial document for every content.contentString field, and count the statistics
        for(String sentences : paragraph) {
-           String json = "{\"doc\":{" +
-                                "\"id\":\"test\"," +
-                                "\"article_url\":\"www.test.com\"," +
-                                "\"title\":\"test\"," +
-                                "\"author\":\"test\"," +
-                                "\"published_date\":1374190070000," +
-                                "\"contents\":[{" +
-                                    "\"contentString\":\"" + sentences + "\"}]" +
-                                "}," +
-                            "\"fields\":[\"contents.contentString\"]," +
-                            "\"field_statistics\":false," +
-                            "\"term_statistics\":true," +
-                            "\"positions\":false," +
-                            "\"offsets\":false" +
-                        "}";
-           HttpEntity entity        = new NStringEntity(json, APPLICATION_JSON);
+           String json                  = "{\"doc\":{" +
+                                                    "\"id\":\"test\"," +
+                                                    "\"article_url\":\"www.test.com\"," +
+                                                    "\"title\":\"test\"," +
+                                                    "\"author\":\"test\"," +
+                                                    "\"published_date\":1374190070000," +
+                                                    "\"contents\":[{" +
+                                                        "\"contentString\":\"" + sentences + "\"}]" +
+                                                    "}," +
+                                                "\"fields\":[\"contents.contentString\"]," +
+                                                "\"field_statistics\":false," +
+                                                "\"term_statistics\":true," +
+                                                "\"positions\":false," +
+                                                "\"offsets\":false" +
+                                            "}";
+           HttpEntity entity            = new NStringEntity(json, APPLICATION_JSON);
 
            try {
-               Response response    = restClient.performRequest("GET", "last/_doc/_termvector?pretty", params, entity);
-               String responseBody  = EntityUtils.toString(response.getEntity());
-               JSONObject terms     = new JSONObject(responseBody)
-                                           .getJSONObject("term_vectors")
-                                           .getJSONObject("contents.contentString")
-                                           .getJSONObject("terms");
+               Response response        = restClient.performRequest("GET", endpoint, params, entity);
+               String responseBody      = EntityUtils.toString(response.getEntity());
+               JSONObject terms         = new JSONObject(responseBody)
+                                                .getJSONObject("term_vectors")
+                                                .getJSONObject("contents.contentString")
+                                                .getJSONObject("terms");
                //iterate over the JSONObject, which contains the word AND another JSONObject (the statistics)
                Iterator keys = terms.keys();
                while (keys.hasNext()) {
@@ -173,24 +178,24 @@ public class SearchWithLowLevelAPI {
                    JSONObject word      = terms.getJSONObject(key);
                    //System.out.println(key);
                    //System.out.println(word);
-                   int[] wordStatistics = new int[3];
+                   int[] wordStats      = new int[3];
 
                    //TODO: Double check this later
-                   int doc_freq     = word.isNull("doc_freq") ? 1 : word.getInt("doc_freq");
-                   int ttf          = word.isNull("ttf")      ? 1 : word.getInt("ttf");
-                   int term_freq    = word.getInt("term_freq");
+                   int doc_freq         = word.isNull("doc_freq") ? 1 : word.getInt("doc_freq");
+                   int ttf              = word.isNull("ttf")      ? 1 : word.getInt("ttf");
+                   int term_freq        = word.getInt("term_freq");
 
                    //the map already contains the word?
                    if(wordFreq.containsKey(key)) {
-                       wordStatistics[0] = doc_freq;
-                       wordStatistics[1] = ttf;
-                       wordStatistics[2] = wordFreq.get(key)[2] + term_freq;
+                       wordStats[0]     = doc_freq;
+                       wordStats[1]     = ttf;
+                       wordStats[2]     = wordFreq.get(key)[2] + term_freq;
                    } else {
-                       wordStatistics[0] = doc_freq;                            //in wie vielen Dokumenten das Wort vorkommt
-                       wordStatistics[1] = ttf;                                 //wie oft das Wort insgesamt vorkommt
-                       wordStatistics[2] = term_freq;                           //wie oft das Wort im angegebenen Artikel vorkommt
+                       wordStats[0]     = doc_freq;                            //in wie vielen Dokumenten das Wort vorkommt
+                       wordStats[1]     = ttf;                                 //wie oft das Wort insgesamt vorkommt
+                       wordStats[2]     = term_freq;                           //wie oft das Wort im angegebenen Artikel vorkommt
                    }
-                   wordFreq.put(key, wordStatistics);
+                   wordFreq.put(key, wordStats);
                }
                //comment this line below to disable printing the Statistics
                //printWordFrequencies(wordFreq);

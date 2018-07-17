@@ -14,6 +14,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,8 @@ public class SearchClient {
     private String ipAdresse;
     private int port;
 
-
+    //Gibt die Anzahl der Ergebnis im Ergebnis Array an
+    private final int sizeResult =100;
 
     public SearchClient(String ipAdresse, int port, String index) {
         this.ipAdresse = ipAdresse;
@@ -42,7 +44,7 @@ public class SearchClient {
      * Index: last
      */
     public SearchClient(){
-        this("localhost", 9200,"last");
+        this("localhost", 9200,"final");
     }
 
     private void startClient(){
@@ -100,7 +102,7 @@ public class SearchClient {
         SearchHit[] searchHits;
         String documentID;
 
-        searchRequest = new SearchRequest("last");
+        searchRequest = new SearchRequest("final");
         searchRequest.types("_doc");
         searchSourceBuilder = new SearchSourceBuilder();
 
@@ -118,8 +120,8 @@ public class SearchClient {
 
     }
 
-    public Map searchArticleByStringAndDate(String searchText, Long publishedDate) throws IOException {
-
+    public ArrayList<String[]> searchArticleByStringAndDate(String searchText, Long publishedDate) throws IOException {
+        ArrayList<String[]> arrayList = new ArrayList<String[]>();
         HashMap<String,Map> map;
         SearchResponse searchResponse;
         SearchHits hits;
@@ -144,13 +146,28 @@ public class SearchClient {
         searchHits = hits.getHits();
 
         for (SearchHit hit : searchHits) {
-            String elasticIdDocument= hit.getId();
-            Map<String, Object> document = getDocumentByIDIndex(elasticIdDocument);
-            String artikelId = (String)document.get("id");
-            map.put(artikelId, document);
+            String[] stringarray = new String[2];
+
+            //Konvertiert float score zu einem String
+            String score = Float.toString(hit.getScore());
+
+            //----------ALTER CODE-------------
+            //Kann geloscht werden, wenn alles funktioniert
+            //String elasticIdDocument= hit.getId();
+           // Map<String, Object> document = getDocumentByIDIndex(elasticIdDocument);
+            //String artikelId = (String)document.get("id");
+            //map.put(artikelId, document);
+
+            String sourceAsString = hit.getSourceAsString();
+            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+            stringarray[0] = (String) sourceAsMap.get("id");
+            stringarray[1] = score;
+
+
+            arrayList.add(stringarray);
         }
 
-        return map;
+        return arrayList;
 
     }
 
@@ -161,10 +178,11 @@ public class SearchClient {
      */
     public SearchResponse getSearchResultFromResponse(QueryBuilder query){
         startClient();
-        SearchRequest searchRequest = new SearchRequest("last");
+        SearchRequest searchRequest = new SearchRequest("final");
         searchRequest.types("_doc");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
+        //Anzahl der Hit in der Map
+        searchSourceBuilder.size(sizeResult);
         searchSourceBuilder.query(query);
 
         searchRequest.source(searchSourceBuilder);
