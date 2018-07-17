@@ -14,7 +14,7 @@ import java.io.PrintWriter;
  * 2) auf der Standardausgabe ausgeben lassen
  *
  *
- * TREC-Output-Format:          topicID Q0 wapoArtikelID rank score RUNTYPE
+ * TREC-Output-Format:          topicID Q0 wapoArtikelID rank score runtag
  *
  * @author Michelle Blau, Johannes Gerwert
  * @version 09.07.2018
@@ -22,16 +22,18 @@ import java.io.PrintWriter;
 
 public class OutputWriter {
 
-    private static final String RUNTYPE = "htwsaar";
+    //private static final String RUNTYPE = "htwsaar";
 
     private StringBuilder outputBuilder;
+    private String runtag;
 
     /**
      * Konstruktor, der das Attribut "outputBuilder" mit einem leeren String initialisiert, sodass dort später die Daten
      * im TREC-Output-Format abgespeichert werden können
      */
-    public OutputWriter(){
+    public OutputWriter(String runtag){
         outputBuilder = new StringBuilder("");
+        this.runtag = runtag;
     }
 
     /**
@@ -68,7 +70,7 @@ public class OutputWriter {
      */
     private void format(Output output, int rank){
         String temp = output.getTopicID() + " Q0 " + output.getWapoArtikelID() + " "
-                + rank + " " + output.getScore() + " " + RUNTYPE + "\n";
+                + rank + " " + output.getScore() + " " + this.runtag + "\n";
 
         outputBuilder.append(temp);
     }
