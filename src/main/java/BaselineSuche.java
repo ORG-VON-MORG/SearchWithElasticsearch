@@ -2,13 +2,14 @@ import edu.stanford.nlp.simple.*;
 import edu.stanford.nlp.simple.Document;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class BaselineSuche {
 
     public static void main (String[] args){
-
+        ArrayList<String[]> arrayList;
         Map mapWithAllRelevantArticle;
         Long published_date;
         Map map = null;
@@ -46,7 +47,7 @@ public class BaselineSuche {
         //-------miblau-----------
 
         try {
-            mapWithAllRelevantArticle= searchClient.searchArticleByStringAndDate(titleEntities,published_date);
+            arrayList= searchClient.searchArticleByStringAndDate(titleEntities,published_date);
 
             System.out.println("test");
         } catch (IOException e) {

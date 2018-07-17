@@ -4,6 +4,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -22,11 +23,17 @@ public class SearchWithCoreNLP {
         searchClient = new SearchClient();
     }
 
-
-    public Map search(String artikelID) {
+    /**
+     * Methode nimmt ein QueryBuilder Objekt an und führt die Suche aus.
+     * @param WAPOId Nimmt eine Artike-ID der Washington Post an
+     * @return Gibt eine ArrayListe mit einem String[] zurueck. An der erste Stelle im Array steht die WAPO ID. An der
+     * zweiten Stelle steht die Score.
+     */
+    public ArrayList<String[]> search(String WAPOId) {
+        ArrayList<String[]> arrayList = new ArrayList<String[]>();
 
         try {
-            map = searchClient.getArticleByWPID(artikelID);
+            map = searchClient.getArticleByWPID(WAPOId);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +77,7 @@ public class SearchWithCoreNLP {
         }
         //System.out.println(titleEntities);
         try {
-            return mapWithAllRelevantArticle = searchClient.searchArticleByStringAndDate(titleEntities, published_date);
+            return arrayList = searchClient.searchArticleByStringAndDate(titleEntities, published_date);
         } catch (IOException e) {
             e.printStackTrace();
         }
