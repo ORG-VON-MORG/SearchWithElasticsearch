@@ -11,7 +11,7 @@ public class SearchWithCoreNLPTest {
         String artikelID3 = "d9ab1a04-eff1-11e2-9008-61e94a7ea20d";
         String artikelID4 = "ecb715f2-efd4-11e2-9008-61e94a7ea20d";
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
-        searchWithCoreNLP.startClient();
+        //searchWithCoreNLP.startClient();
 
         //-----delete the time later, only for testing-----
 

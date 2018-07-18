@@ -22,27 +22,21 @@ public class SearchWithDocFreq {
      * zweiten Stelle steht die Score.
      */
     public ArrayList<String[]> search(String WAPOId){
-        Map map = null;
-        SearchClient searchClient;
-        QueryBuilder query;
-        Long  published_date;
+        SearchClient searchClient = new SearchClient();
+        Map documentSource = null;
         List<Map.Entry<String, Double>> idf;
         HashMap<String, Double> tmp;
-        SearchResponse searchResponse;
-        ArrayList<String[]> arrayList = new ArrayList<String[]>();
         final int MAX_KEYWORDS_IN_QUERY = 5;
 
-
-        searchClient = new SearchClient();      //start the client from SearchClient.java
         try {
-           map = searchClient.getArticleByWPID(WAPOId);
+           documentSource = searchClient.getArticleByWPID(WAPOId);
         } catch (IOException e) {
             e.printStackTrace();
         }
         //Holt Published Date vom Artikel
-        published_date = (Long) map.get("published_date");
+        Long published_date = (Long)documentSource.get("published_date");
 
-        query = QueryBuilders.boolQuery()
+        QueryBuilder query = QueryBuilders.boolQuery()
                // .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
                //.must(QueryBuilders.rangeQuery("published_date").from(published_date - 31556952000L).to((published_date)));
                  .must(QueryBuilders.rangeQuery("published_date").from(published_date - 94670856000L).to((published_date -1L)));
@@ -62,78 +56,11 @@ public class SearchWithDocFreq {
            ((BoolQueryBuilder) query).should(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
         }
 
-        searchResponse                      = searchClient.getSearchResultFromResponse(query);
+        SearchResponse searchResponse       = searchClient.getSearchResultFromResponse(query);
         SearchHits hits                     = searchResponse.getHits();
         SearchHit[] searchHits              = hits.getHits();
-        List<result> results                = new ArrayList<result>();
-        for (SearchHit hit : searchHits) {
-            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            String id                       = (String)sourceAsMap.get("id");
-            Float score                     = hit.getScore();
-            String title                    = (String)sourceAsMap.get("title");
-            String author                   = (String)sourceAsMap.get("author");
-            long pub_date                   = (Long)sourceAsMap.get("published_date");
-            //erstelle für jede Ergebnis ein Objekt
-            result att                      = new result(id, score, title, author, pub_date);
-            if (results.isEmpty()) {
-                results.add(att);
-            } else {
-                //list enthält Artikel mit gleichen title, author, und published_date?
-                if(results.contains(att)){
-                    int index               = results.indexOf(att);
-                    if(results.get(index).getScore() < att.getScore()) {
-                        //ersetzen der alte Eintrag mit der neue (höheren score)
-                        results.set(index, att);
-                    }
-                } else {
-                    results.add(att);
-                }
-            }
-        }
-        for (result r : results) {
-            arrayList.add(new String[]{r.getId(), r.getScore().toString()});
-            //System.out.println(r.getTitle());      //for testing
-        }
-        return arrayList;
-    }
 
-    /**
-     * Hilfsklasse, speichert Suchergebnisanfrage als einem Objekt
-     */
-    class result
-    {
-        private String id;
-        private Float score;
-        private String title;
-        private String author;
-        private long published_date;
-
-        result(String id, Float score, String title, String author, long published_date) {
-            this.id = id;
-            this.score = score;
-            this.title = title;
-            this.author = author;
-            this.published_date = published_date;
-        }
-
-        String getId() { return this.id; }
-        String getTitle() { return this.title; }
-        String getAuthor() { return this.author; }
-        long getPublished_date() { return this.published_date; }
-        Float getScore() { return this.score; }
-
-        /**
-         * prüfe, ob 2 Artikel gleich sind
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof result) {
-                return this.title.equals(((result) obj).getTitle()) &&
-                       this.author.equals(((result) obj).getAuthor()) &&
-                       this.published_date == (((result) obj).getPublished_date());
-            }
-            return false;
-        }
+        return util.filterDuplicateResults(searchHits);
     }
 
 }

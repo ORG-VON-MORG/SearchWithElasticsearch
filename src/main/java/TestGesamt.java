@@ -37,7 +37,7 @@ public class TestGesamt {
         ArrayList<String[]> arrayListCORENLP = new ArrayList<String[]>();
         System.out.println("---------------TEST MIT CORENLP---------------");
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
-        searchWithCoreNLP.startClient();
+        //searchWithCoreNLP.startClient();
         arrayListCORENLP = searchWithCoreNLP.search(WAPOId);
         System.out.println("Gefundene Artikel:");
 

@@ -107,7 +107,7 @@ public class Main {
 
         ArrayList<String[]> ergebnisListe;
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
-        searchWithCoreNLP.startClient();
+        //searchWithCoreNLP.startClient();
 
         ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
 

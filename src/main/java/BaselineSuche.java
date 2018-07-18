@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class BaselineSuche {
 
-    public static void main (String[] args){
+    public static void main (String[] args) {
         ArrayList<String[]> arrayList;
         Map mapWithAllRelevantArticle;
         Long published_date;
@@ -25,7 +25,6 @@ public class BaselineSuche {
         published_date = (Long) map.get("published_date");
 
 
-
         String title = map.get("title").toString();
 
         //-------miblau----------
@@ -36,22 +35,16 @@ public class BaselineSuche {
         String titleEntities = "";
 
         /*in dieser for-Schleife werden alle Entitaeten des title-Feldes ermittelt und in der "titleEntities"-Variable gespeichert*/
-        for(Sentence sent: doc.sentences()){
+        for (Sentence sent : doc.sentences()) {
             List<String> entityList = sent.mentions();
-            for (String entity : entityList){
+            for (String entity : entityList) {
                 titleEntities += entity + " ";
             }
 
         }
         System.out.println(titleEntities);
         //-------miblau-----------
-
-        try {
-            arrayList= searchClient.searchArticleByStringAndDate(titleEntities,published_date);
-
-            System.out.println("test");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        arrayList = searchClient.searchArticleByStringAndDate(titleEntities, published_date);
+        System.out.println("test");
     }
 }
