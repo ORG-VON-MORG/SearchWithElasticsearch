@@ -197,20 +197,16 @@ public class util {
             long pub_date                   = (Long)sourceAsMap.get("published_date");
             //erstelle für jede Ergebnis ein Objekt
             result att                      = new result(id, score, title, author, pub_date);
-            if (results.isEmpty()) {
-                results.add(att);
-            } else {
-                //list enthält Artikel mit gleichen title, author, und published_date?
-                if(results.contains(att)){
-                    int index               = results.indexOf(att);
-                    if(results.get(index).getScore() < att.getScore()) {
-                        //ersetzen der alte Eintrag mit der neue (höheren score)
-                        results.set(index, att);
-                    }
-                } else {
-                    results.add(att);
-                }
-            }
+			//list enthält Artikel mit gleichen title, author, und published_date?
+			if (results.contains(att)) {
+				int index               = results.indexOf(att);
+				if (results.get(index).getScore() < att.getScore()) {
+					//ersetzen der alte Eintrag mit der neue (höheren score)
+					results.set(index, att);
+				}
+			} else {
+				results.add(att);
+			}
         }
         for (result r : results) {
             arrayList.add(new String[]{r.getId(), r.getScore().toString()});
