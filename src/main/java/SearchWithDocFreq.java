@@ -22,30 +22,24 @@ public class SearchWithDocFreq {
      * zweiten Stelle steht die Score.
      */
     public ArrayList<String[]> search(String WAPOId){
-        Map map = null;
-        SearchClient searchClient;
-        QueryBuilder query;
-        Long  published_date;
+        SearchClient searchClient = new SearchClient();
+        Map documentSource = null;
         List<Map.Entry<String, Double>> idf;
         HashMap<String, Double> tmp;
-        SearchResponse searchResponse;
-        ArrayList<String[]> arrayList = new ArrayList<String[]>();
         final int MAX_KEYWORDS_IN_QUERY = 5;
 
-
-        searchClient = new SearchClient();      //start the client from SearchClient.java
         try {
-           map = searchClient.getArticleByWPID(WAPOId);
+           documentSource = searchClient.getArticleByWPID(WAPOId);
         } catch (IOException e) {
             e.printStackTrace();
         }
         //Holt Published Date vom Artikel
-        published_date = (Long) map.get("published_date");
+        Long published_date = (Long)documentSource.get("published_date");
 
-        query = QueryBuilders.boolQuery()
-               //.must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
+        QueryBuilder query = QueryBuilders.boolQuery()
+               // .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
                //.must(QueryBuilders.rangeQuery("published_date").from(published_date - 31556952000L).to((published_date)));
-                .must(QueryBuilders.rangeQuery("published_date").from(published_date - 94670856000L).to((published_date -1L)));
+                 .must(QueryBuilders.rangeQuery("published_date").from(published_date - 94670856000L).to((published_date -1L)));
 
 
 
@@ -62,28 +56,11 @@ public class SearchWithDocFreq {
            ((BoolQueryBuilder) query).should(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
         }
 
-        searchResponse = searchClient.getSearchResultFromResponse(query);
-        SearchHits hits = searchResponse.getHits();
-        SearchHit[] searchHits = hits.getHits();
-        for (SearchHit hit : searchHits) {
-            String[] stringarray = new String[2];
-            //Konvertiert float score zu einem String
-            String score = Float.toString(hit.getScore());
+        SearchResponse searchResponse       = searchClient.getSearchResultFromResponse(query);
+        SearchHits hits                     = searchResponse.getHits();
+        SearchHit[] searchHits              = hits.getHits();
 
-
-            String sourceAsString = hit.getSourceAsString();
-            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            stringarray[0] = (String) sourceAsMap.get("id");
-            stringarray[1] = score;
-
-
-            arrayList.add(stringarray);
-        }
-
-        return arrayList;
-
+        return util.filterDuplicateResults(searchHits);
     }
-
-
 
 }

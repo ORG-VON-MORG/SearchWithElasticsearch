@@ -30,7 +30,7 @@ public class TestOutputWriter {
         outputArray1[0] = output1;
         outputArray1[1] = output2;
         outputArray2[0] = output3;
-        OutputWriter outputWriter = new OutputWriter();
+        OutputWriter outputWriter = new OutputWriter("htwsaarTEST");
 
         outputWriter.receive(outputArray1);
         outputWriter.reset();

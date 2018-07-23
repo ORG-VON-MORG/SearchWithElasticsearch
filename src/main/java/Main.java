@@ -23,6 +23,9 @@ public class Main {
     private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
     private static final String ERGEBNIS_VERZEICHNIS_CORENLP = ".\\src\\main\\resources\\Anfrageergebnisse\\CoreNLP\\";
 
+    private static final String RUNTAG_DOCFREQ = "htwsaar01";
+    private static final String RUNTAG_CORENLP = "htwsaar02";
+
 
     /**
      * Erstellt für jede Anfrage-Art eine eigene Ergebnis-Datei, Zielverzeichnis: "..../resources/Anfrageergebenisse"
@@ -38,8 +41,8 @@ public class Main {
             HashMap<Integer, String> mapMitDatenAusTopicDatei = readfromXML(topic.toString());
             Set<Integer>             alleTopicIDs             = mapMitDatenAusTopicDatei.keySet();
 
-            OutputWriter outputWriterDocFreq = new OutputWriter();
-            OutputWriter outputWriterCoreNLP = new OutputWriter();
+            OutputWriter outputWriterDocFreq = new OutputWriter(RUNTAG_DOCFREQ);
+            OutputWriter outputWriterCoreNLP = new OutputWriter(RUNTAG_CORENLP);
 
             for(Integer topicID : alleTopicIDs) {
                 String wapoArtikelID = mapMitDatenAusTopicDatei.get(topicID);
@@ -104,7 +107,7 @@ public class Main {
 
         ArrayList<String[]> ergebnisListe;
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
-        searchWithCoreNLP.startClient();
+        //searchWithCoreNLP.startClient();
 
         ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
 
