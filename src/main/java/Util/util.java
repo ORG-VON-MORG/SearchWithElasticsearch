@@ -266,10 +266,11 @@ class result
 class sortScore implements Comparator<String[]>
 {
 	public int compare(String[] a, String[] b) {
-		if (Float.parseFloat(a[1]) > Float.parseFloat(b[1]))
+		/*if (Float.parseFloat(a[1]) > Float.parseFloat(b[1]))
 			return -1;
 		if (Float.parseFloat(a[1]) == Float.parseFloat(b[1]))
 			return 0;
-		return 1;
+		return 1;*/
+		return Float.compare(Float.parseFloat(b[1]), Float.parseFloat(a[1]));
 	}
 }
