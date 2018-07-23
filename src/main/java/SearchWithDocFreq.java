@@ -60,7 +60,8 @@ public class SearchWithDocFreq {
         SearchHits hits                     = searchResponse.getHits();
         SearchHit[] searchHits              = hits.getHits();
 
-        return util.filterDuplicateResults(searchHits);
+        return util.filterDuplicateResults(published_date, searchHits);
+
     }
 
 }
