@@ -43,9 +43,8 @@ public class BoostSearch {
            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
            final QueryBuilder query = QueryBuilders.boolQuery()
                   // .must(QueryBuilders.matchQuery("contents.contentString",title).boost(3))//operator(Operator.AND))
-                   //.must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
-                  //  .must(QueryBuilders.rangeQuery("published_date").from(published_date).to((published_date - 94670856000L)));
-                    .must(QueryBuilders.rangeQuery("published_date").from(published_date).to((published_date - 31556952000L)));
+                   .must(QueryBuilders.rangeQuery("published_date").lt(published_date.toString()));
+
 
 
 
