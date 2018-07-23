@@ -49,7 +49,7 @@ public class Main {
 
                 if(stringIstNichtLeer(wapoArtikelID)){
 
-                    fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
+                    //fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
                     fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
                 }
             }

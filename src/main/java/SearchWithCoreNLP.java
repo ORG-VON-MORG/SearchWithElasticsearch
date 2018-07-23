@@ -48,6 +48,7 @@ public class SearchWithCoreNLP {
             }
         }
         //System.out.println(titleEntities);
-        return searchClient.searchArticleByStringAndDate(titleEntities, published_date);
+        ArrayList<String[]> res = searchClient.searchArticleByStringAndDate(titleEntities, published_date);
+        return res;
     }
 }

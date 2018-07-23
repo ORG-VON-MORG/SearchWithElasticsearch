@@ -59,6 +59,7 @@ public class SearchWithDocFreq {
         SearchResponse searchResponse       = searchClient.getSearchResultFromResponse(query);
         SearchHits hits                     = searchResponse.getHits();
         SearchHit[] searchHits              = hits.getHits();
+        int size = searchHits.length;
 
         return util.filterDuplicateResults(published_date, searchHits);
 

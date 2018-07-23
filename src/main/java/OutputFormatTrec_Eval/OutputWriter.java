@@ -49,7 +49,7 @@ public class OutputWriter {
     //TODO: überprüfe, ob alle topic-IDS des "Output"-Objekts gleich sind -> wirf Exception, wenn nicht
         int topicID = outputArray[0].getTopicID();
 
-        for(int i = 0; i < outputArray.length -1; i++) {
+        for(int i = 0; i < outputArray.length; i++) {
             if (outputArray[i].getTopicID() != topicID) {
                 throw new RuntimeException("Die Topic-IDs müssen alle gleich sein");
             }
