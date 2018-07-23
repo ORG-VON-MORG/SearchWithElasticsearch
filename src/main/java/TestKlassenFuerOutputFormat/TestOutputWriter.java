@@ -37,7 +37,7 @@ public class TestOutputWriter {
         outputWriter.receive(outputArray1);
         outputWriter.receive(outputArray2);
         outputWriter.printToSTDOUT();
-        outputWriter.writeToFile(pfadname);
+        outputWriter.appendToFile(pfadname);
         System.out.println(pfadname);
     }
 

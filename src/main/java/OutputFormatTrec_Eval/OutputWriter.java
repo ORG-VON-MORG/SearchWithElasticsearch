@@ -1,9 +1,6 @@
 package OutputFormatTrec_Eval;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 /**
  * Stellt Methoden zur Verfügung, die die Daten von "Output"-Objekten in Strings umwandeln, welche dem TREC-Output-Format
@@ -94,7 +91,11 @@ public class OutputWriter {
         writer.close();
 
 
-    }/**
+    }
+
+
+
+    /**
      * Gibt die aufbereiteten Daten, die im "outputBuilder"-Objekt drinstehen, auf der Standardausgabe aus.
      * Diese Methode sollte ERST NACH DER receive() METHODE AUSGEFÜHRT WERDEN!!!
      */
@@ -106,4 +107,30 @@ public class OutputWriter {
     public void reset() {
         outputBuilder.setLength(0);
     }
+
+
+
+
+
+    /**
+     * Speichert die aufbereiteten Daten, die im "outputBuilder"-Objekt drinstehen, in einer Datei ab, durch Anhängen an die Datei.
+     * Diese Methode sollte ERST NACH DER receive() METHODE AUSGEFÜHRT WERDEN!!!
+     *
+     * Die erzeugte Datei hat dann das TREC-Output-Format
+     *
+     * @param pfadname Pfadname der zu speichernden Datei
+     * @throws FileNotFoundException
+     */
+    public void appendToFile(String pfadname) throws IOException {
+
+        File datei = new File(pfadname).getCanonicalFile();
+        FileOutputStream fileOutputStream = new FileOutputStream(datei, true);
+        PrintWriter writer = new PrintWriter(fileOutputStream);
+
+
+        writer.append(outputBuilder.toString());
+        writer.flush();
+        writer.close();
+    }
+
 }
