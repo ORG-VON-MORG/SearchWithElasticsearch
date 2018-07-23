@@ -18,6 +18,7 @@ public class util {
 
     private static final long docsCount = getDocsCount();
     private static final Set<String> stopWordSet = getStopWordListAsSet();
+    private static final Double ALPHA = 1.0E-12;
 
 
     /**
@@ -68,7 +69,6 @@ public class util {
      * @param idf nimmt HashMap idf entgegen
      * @return gibt sortierte List zurueck
      */
-
     public static List<Entry<String, Double>> sortedMap(HashMap<String, Double> idf) {
         Set<Entry<String, Double>> set = idf.entrySet();
         List<Entry<String, Double>> list = new ArrayList<Entry<String, Double>>(set);
@@ -185,7 +185,7 @@ public class util {
         return hsm;
     }
 
-    public static ArrayList<String[]> filterDuplicateResults(SearchHit[] searchHits) {
+    public static ArrayList<String[]> filterDuplicateResults(Long origPubDate, SearchHit[] searchHits) {
         ArrayList<String[]> arrayList       = new ArrayList<String[]>();
         ArrayList<result> results           = new ArrayList<result>();
         for (SearchHit hit : searchHits) {
@@ -208,11 +208,18 @@ public class util {
 				results.add(att);
 			}
         }
+        //Collections.sort(results, new sortScore());
         for (result r : results) {
-            arrayList.add(new String[]{r.getId(), r.getScore().toString()});
+			/*Long date = (origPubDate -r.getPublished_date());
+			Double betrag = -ALPHA * Math.abs(date);
+			Double power =  Math.pow(Math.E, betrag);
+			Double finalScore = r.getScore() * power;
+            arrayList.add(new String[]{r.getId(), finalScore.toString()});*/
+			arrayList.add(new String[]{r.getId(), r.getScore().toString()});
             //System.out.println(r.getTitle());      //for testing
         }
         //System.out.println("\n--------------------------\n\n");
+		Collections.sort(arrayList, new sortScore());
         return arrayList;
     }
 }
@@ -254,4 +261,15 @@ class result
         }
         return false;
     }
+}
+
+class sortScore implements Comparator<String[]>
+{
+	public int compare(String[] a, String[] b) {
+		if (Float.parseFloat(a[1]) > Float.parseFloat(b[1]))
+			return -1;
+		if (Float.parseFloat(a[1]) == Float.parseFloat(b[1]))
+			return 0;
+		return 1;
+	}
 }
