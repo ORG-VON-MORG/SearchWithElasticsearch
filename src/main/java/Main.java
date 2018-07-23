@@ -22,7 +22,6 @@ public class Main {
     private static final String ERGEBNIS_VERZEICHNIS = ".\\src\\main\\resources\\Anfrageergebnisse";
     private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
     private static final String ERGEBNIS_VERZEICHNIS_CORENLP = ".\\src\\main\\resources\\Anfrageergebnisse\\CoreNLP\\";
-
     private static final String RUNTAG_DOCFREQ = "htwsaar01";
     private static final String RUNTAG_CORENLP = "htwsaar02";
 
