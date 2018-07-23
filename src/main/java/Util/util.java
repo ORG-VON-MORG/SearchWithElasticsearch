@@ -20,7 +20,6 @@ public class util {
     private static final Set<String> stopWordSet = getStopWordListAsSet();
     private static final Double ALPHA = 1.0E-12;
 
-
     /**
      * Methode Splitten einen String in Teilwoerter und gibt ein Array zurueck.
      * Tokenization mittles White-Space
@@ -193,9 +192,7 @@ public class util {
             String id                       	= (String)sourceAsMap.get("id");
             Float score                     	= hit.getScore();
             String title                   	= (String)sourceAsMap.get("title");
-            title 							 	= title == null ? "no title" : title;
             String author                   	= (String)sourceAsMap.get("author");
-			author 							 	= author == null  ? "no author" : author;
             long pub_date                   	= (Long)sourceAsMap.get("published_date");
             //erstelle für jede Ergebnis ein Objekt
             result att                      	= new result(id, score, title, author, pub_date);
@@ -215,11 +212,11 @@ public class util {
 			Double power 		= Math.pow(Math.E, betrag);
 			Double finalScore 	= r.getScore() * power;
 			arrayList.add(new String[]{r.getId(), finalScore.toString()});
-			//arrayList.add(new String[]{r.getId(), r.getScore().toString()});
+			//arrayList.add(new String[]{r.getId(), r.getScore().toString()});		//delete this??
             //System.out.println(r.getTitle());      //for testing
         }
         //System.out.println("\n--------------------------\n\n");
-		Collections.sort(arrayList, Collections.reverseOrder(new SortScore()));
+		Collections.sort(arrayList, Collections.reverseOrder(new SortScore()));		//nach score absteigend sortieren
         return arrayList;
     }
 }
@@ -234,12 +231,14 @@ class result
     private String title;
     private String author;
     private long published_date;
+    private static final String DEFAULTTITLE = "no title";
+    private static final String DEFAULTAUTHOR = "no author";
 
     result(String id, Float score, String title, String author, long published_date) {
         this.id = id;
         this.score = score;
-        this.title = title;
-        this.author = author;
+        this.title = title == null ? DEFAULTTITLE : title;
+        this.author = author == null ? DEFAULTAUTHOR : author;
         this.published_date = published_date;
     }
 
@@ -263,6 +262,9 @@ class result
     }
 }
 
+/**
+ * Hilfsklasse, sortiert Suchergebnis nach score
+ */
 class SortScore implements Comparator<String[]>
 {
 	public int compare(String[] a, String[] b) {
