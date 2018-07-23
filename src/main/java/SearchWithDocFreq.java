@@ -26,7 +26,7 @@ public class SearchWithDocFreq {
         Map documentSource = null;
         List<Map.Entry<String, Double>> idf;
         HashMap<String, Double> tmp;
-        final int MAX_KEYWORDS_IN_QUERY = 5;
+        final int MAX_KEYWORDS_IN_QUERY = 20;
 
         try {
            documentSource = searchClient.getArticleByWPID(WAPOId);
