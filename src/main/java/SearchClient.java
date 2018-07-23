@@ -103,7 +103,6 @@ public class SearchClient {
         SearchResponse searchResponse           = client.search(searchRequest);
         SearchHits hits                         = searchResponse.getHits();
         SearchHit[] searchHits                  = hits.getHits();
-        int length = searchHits.length;
         String documentID                       = searchHits[0].getId();
 
         closeClient();

@@ -48,8 +48,8 @@ public class Main {
 
                 if(stringIstNichtLeer(wapoArtikelID)){
 
-                    //fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
-                    fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
+                    fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
+                    //fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
                 }
             }
             //TODO: dieser Teil hier sollte lesbarer gemacht werden

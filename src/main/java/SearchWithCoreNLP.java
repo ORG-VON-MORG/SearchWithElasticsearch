@@ -17,19 +17,19 @@ public class SearchWithCoreNLP {
      * zweiten Stelle steht die Score.
      */
     public ArrayList<String[]> search(String WAPOId) {
-        SearchClient searchClient = new SearchClient();
-        Map documentSource = null;
+        SearchClient searchClient       = new SearchClient();
+        Map documentSource              = null;
         try {
-            documentSource = searchClient.getArticleByWPID(WAPOId);
+            documentSource              = searchClient.getArticleByWPID(WAPOId);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Long published_date = (Long)documentSource.get("published_date");
-        String title        = documentSource.get("title").toString();
+        Long published_date             = (Long)documentSource.get("published_date");
+        String title                    = documentSource.get("title").toString();
 
         //Properties für das corenlp server konfigurieren
-        Properties props    = new Properties();
+        Properties props                = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, coref");
         props.setProperty("coref.algorithm", "neural");
 

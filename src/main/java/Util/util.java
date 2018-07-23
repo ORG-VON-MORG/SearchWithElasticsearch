@@ -188,11 +188,7 @@ public class util {
     public static ArrayList<String[]> filterDuplicateResults(Long origPubDate, SearchHit[] searchHits) {
         ArrayList<String[]> arrayList       	= new ArrayList<String[]>();
         ArrayList<result> results           	= new ArrayList<result>();
-		int i = 0;
         for (SearchHit hit : searchHits) {
-            if (hit.getSourceAsMap() == null) {
-            	continue;
-			}
             Map<String, Object> sourceAsMap 	= hit.getSourceAsMap();
             String id                       	= (String)sourceAsMap.get("id");
             Float score                     	= hit.getScore();
@@ -203,13 +199,10 @@ public class util {
             long pub_date                   	= (Long)sourceAsMap.get("published_date");
             //erstelle für jede Ergebnis ein Objekt
             result att                      	= new result(id, score, title, author, pub_date);
-			//list enthält Artikel mit gleichen title, author, und published_date?
-			//System.out.println(i++);
-			if (results.contains(att)) {
+			if (results.contains(att)) {			//list enthält Artikel mit gleichen title, author, und published_date?
 				int index               		= results.indexOf(att);
 				if (results.get(index).getScore() < att.getScore()) {
-					//ersetzen der alte Eintrag mit der neue (höheren score)
-					results.set(index, att);
+					results.set(index, att);		//ersetzen der alte Eintrag mit der neue (höheren score)
 				}
 			} else {
 				results.add(att);
@@ -217,10 +210,10 @@ public class util {
         }
         //Collections.sort(results, new sortScore());
         for (result r : results) {
-			Long date = (origPubDate -r.getPublished_date());
-			Double betrag = -ALPHA * Math.abs(date);
-			Double power =  Math.pow(Math.E, betrag);
-			Double finalScore = r.getScore() * power;
+			Long date 			= (origPubDate - r.getPublished_date());
+			Double betrag 		= -ALPHA * Math.abs(date);
+			Double power 		= Math.pow(Math.E, betrag);
+			Double finalScore 	= r.getScore() * power;
 			arrayList.add(new String[]{r.getId(), finalScore.toString()});
 			//arrayList.add(new String[]{r.getId(), r.getScore().toString()});
             //System.out.println(r.getTitle());      //for testing

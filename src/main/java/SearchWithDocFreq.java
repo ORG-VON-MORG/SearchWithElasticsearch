@@ -22,8 +22,8 @@ public class SearchWithDocFreq {
      * zweiten Stelle steht die Score.
      */
     public ArrayList<String[]> search(String WAPOId){
-        SearchClient searchClient = new SearchClient();
-        Map documentSource = null;
+        SearchClient searchClient       = new SearchClient();
+        Map documentSource              = null;
         List<Map.Entry<String, Double>> idf;
         HashMap<String, Double> tmp;
         final int MAX_KEYWORDS_IN_QUERY = 20;
@@ -52,7 +52,7 @@ public class SearchWithDocFreq {
 
         Iterator <Map.Entry<String, Double>> iterator = idf.iterator();
         for(int i = 0;i<=MAX_KEYWORDS_IN_QUERY;i++){
-           Map.Entry<String,Double> entry = iterator.next();
+           Map.Entry<String,Double> entry   = iterator.next();
            ((BoolQueryBuilder) query).should(QueryBuilders.matchQuery("contents.contentString",entry.getKey()));
         }
 
