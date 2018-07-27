@@ -179,7 +179,6 @@ public class SearchWithLowLevelAPI {
                                             "}";
            HttpEntity entity            = new NStringEntity(json, APPLICATION_JSON);
 
-           System.out.println(json);
 
            try {
                Response response        = restClient.performRequest("GET", endpoint, params, entity);

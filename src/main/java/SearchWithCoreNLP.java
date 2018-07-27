@@ -48,6 +48,11 @@ public class SearchWithCoreNLP {
             }
         }
         //System.out.println(titleEntities);
+
+        if(titleEntities.isEmpty()){
+            titleEntities= title;
+        }
+
         ArrayList<String[]> res = searchClient.searchArticleByStringAndDate(titleEntities, published_date);
         return res;
     }

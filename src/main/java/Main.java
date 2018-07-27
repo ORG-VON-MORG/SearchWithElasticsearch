@@ -57,7 +57,7 @@ public class Main {
                 if(stringIstNichtLeer(wapoArtikelID)){
 
                   fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
-                    // fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
+                  fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
                 }
             }
 
@@ -139,7 +139,7 @@ public class Main {
 
         outputWriter.receive(outputArray);
     }
-    
+
     /**
      * Prüft, ob ein übergebener String nicht leer ist.
      *
