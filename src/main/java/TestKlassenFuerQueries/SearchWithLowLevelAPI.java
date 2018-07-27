@@ -139,7 +139,7 @@ public class SearchWithLowLevelAPI {
        HashMap<String, int[]> wordFreq  = new HashMap<String, int[]>();
        String elasticId                 = getElasticIdFromArtikelId(artikelId);
        List<String> paragraph           = getCleanContentString(elasticId);
-       //Liste enthält keine Strings mit "-Zeichen und keine leehren Strings
+       //Liste enthält keine Strings mit "-Zeichen und keine leere Strings
        List<String> paragraphBereinigt  = new ArrayList<String>();
        String endpoint                  = indexName + "/_doc/_termvector";
        Map<String, String> params       = Collections.emptyMap();
@@ -148,7 +148,7 @@ public class SearchWithLowLevelAPI {
        //iterate over all content.contentString field
        //this for loop will create artificial document for every content.contentString field, and count the statistics
 
-       //for Schleife entfernt "-Zeichen und entfernt leehre Stings
+       //for Schleife entfernt "-Zeichen und entfernt leere Strings
        for (String sentences : paragraph) {
            sentences = sentences.replaceAll("\"","").trim();
 
