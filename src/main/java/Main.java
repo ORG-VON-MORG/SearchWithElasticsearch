@@ -1,5 +1,6 @@
 import OutputFormatTrec_Eval.Output;
 import OutputFormatTrec_Eval.OutputWriter;
+import Util.util;
 
 import java.io.*;
 import java.util.*;
@@ -38,7 +39,7 @@ public class Main {
         File[] alleTopicsImVerzeichnis = topicVerzeichnis.listFiles();
 
         for(File topic : alleTopicsImVerzeichnis) {
-            HashMap<Integer, String> mapMitDatenAusTopicDatei = readfromXML(topic.toString());
+            HashMap<Integer, String> mapMitDatenAusTopicDatei = util.readfromXML(topic.toString());
             Set<Integer>             alleTopicIDs             = mapMitDatenAusTopicDatei.keySet();
 
             System.out.println(mapMitDatenAusTopicDatei.values().size()); //später entfernen
@@ -138,54 +139,7 @@ public class Main {
 
         outputWriter.receive(outputArray);
     }
-
-
-
-    /**
-     * TODO: Kommentar einfügen
-     *
-     * @author Kevin Engelhardt
-     * @param filepath
-     * @return
-     * @throws IOException
-     */
-    public HashMap<Integer, String> readfromXML(String filepath) throws IOException {
-        HashMap<Integer, String> hsm = new HashMap<Integer, String>();
-        BufferedReader br = new BufferedReader(new FileReader(filepath));
-        String line; // Hier noch nicht br.readLine(), weil in Kopf von while schon gelesen wird, dann wuerde die erste Zeile uebersprungen
-        String id = "";
-        Integer num = 0;
-        boolean insideTop = false; // Flag, um zu pruefen, ob man sich innerhalb eines <top> Tags befindet
-        while ((line = br.readLine()) != null) {
-            // Pruefung auf <top> Tag
-            if (line.contains("<top>")) {
-                insideTop = true;
-            } else if (line.contains("</top>")) {
-                insideTop = false;
-            }
-
-            // Wenn innerhalb <top> Tag
-            if (insideTop) {
-                if (line.contains("<num>")) {
-                    Integer number = Integer.parseInt(line.replace("<num>", "").replace("</num>", "").replace(" ", "").replace("Number:", ""));
-                    num = number;
-                } else if (line.contains("<docid>")) {
-                    String docId = line.replace("<docid>", "").replace("</docid>", "").replace(" ", "");
-                    id = docId;
-                }
-
-                // Falls <top> und </top> in der selben Zeile sind, wieder auf false setzen
-                if (line.contains("</top>")) {
-                    insideTop = false;
-                }
-                hsm.put(num, id);
-            }
-        }
-        //System.out.println(hsm);
-        return hsm;
-    }
-
-
+    
     /**
      * Prüft, ob ein übergebener String nicht leer ist.
      *

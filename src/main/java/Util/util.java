@@ -149,7 +149,7 @@ public class util {
      * @author Kevin Engelhardt
      */
 
-    public HashMap<Integer, String> readfromXML(String filepath) throws IOException {
+    public static HashMap<Integer, String> readfromXML(String filepath) throws IOException {
         HashMap<Integer, String> hsm = new HashMap<Integer, String>();
         BufferedReader br = new BufferedReader(new FileReader(filepath));
         String line; // Hier noch nicht br.readLine(), weil in Kopf von while schon gelesen wird, dann wuerde die erste Zeile uebersprungen
@@ -173,14 +173,15 @@ public class util {
                     String docId = line.replace("<docid>", "").replace("</docid>", "").replace(" ", "");
                     id = docId;
                 }
-                hsm.put(num, id);
 
                 // Falls <top> und </top> in der selben Zeile sind, wieder auf false setzen
                 if (line.contains("</top>")) {
                     insideTop = false;
                 }
+                hsm.put(num, id);
             }
         }
+        //System.out.println(hsm);
         return hsm;
     }
 
@@ -219,6 +220,8 @@ public class util {
 		Collections.sort(arrayList, Collections.reverseOrder(new SortScore()));		//nach score absteigend sortieren
         return arrayList;
     }
+
+
 }
 
 /**
@@ -271,3 +274,6 @@ class SortScore implements Comparator<String[]>
 		return Float.compare(Float.parseFloat(a[1]), Float.parseFloat(b[1]));
 	}
 }
+
+
+
