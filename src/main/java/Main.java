@@ -41,10 +41,6 @@ public class Main {
             HashMap<Integer, String> mapMitDatenAusTopicDatei = readfromXML(topic.toString());
             Set<Integer>             alleTopicIDs             = mapMitDatenAusTopicDatei.keySet();
 
-            System.out.println(mapMitDatenAusTopicDatei.values().size());
-            System.out.println(alleTopicIDs.size());
-
-
             OutputWriter outputWriterDocFreq = new OutputWriter(RUNTAG_DOCFREQ);
             OutputWriter outputWriterCoreNLP = new OutputWriter(RUNTAG_CORENLP);
 
@@ -53,7 +49,7 @@ public class Main {
 
                 if(stringIstNichtLeer(wapoArtikelID)){
 
-                    //fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
+                    fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
                     fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
                 }
             }
@@ -114,9 +110,6 @@ public class Main {
         //searchWithCoreNLP.startClient();
 
         ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
-        if (searchWithCoreNLP.search(zuSuchenderArtikel) == null){
-            System.out.println("HILFE DIE CORENLPANFRAGE RETURNED MIR NULL!!");
-        }
 
         Output[] outputArray = new Output[ergebnisListe.size()];
 

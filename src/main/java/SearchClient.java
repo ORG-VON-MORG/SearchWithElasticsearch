@@ -124,6 +124,7 @@ public class SearchClient {
         SearchHits hits                     = searchResponse.getHits();
         SearchHit[] searchHits              = hits.getHits();
 
+
         return util.filterDuplicateResults(publishedDate, searchHits);
     }
 

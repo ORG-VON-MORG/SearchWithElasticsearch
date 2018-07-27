@@ -20,7 +20,6 @@ public class util {
     private static final Set<String> stopWordSet = getStopWordListAsSet();
     private static final Double ALPHA = 1.0E-12;
 
-
     /**
      * Methode Splitten einen String in Teilwoerter und gibt ein Array zurueck.
      * Tokenization mittles White-Space
@@ -186,23 +185,21 @@ public class util {
     }
 
     public static ArrayList<String[]> filterDuplicateResults(Long origPubDate, SearchHit[] searchHits) {
-        ArrayList<String[]> arrayList       = new ArrayList<String[]>();
-        ArrayList<result> results           = new ArrayList<result>();
+        ArrayList<String[]> arrayList       	= new ArrayList<String[]>();
+        ArrayList<result> results           	= new ArrayList<result>();
         for (SearchHit hit : searchHits) {
-            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            String id                       = (String)sourceAsMap.get("id");
-            Float score                     = hit.getScore();
-            String title                    = (String)sourceAsMap.get("title");
-            String author                   = (String)sourceAsMap.get("author");
-            long pub_date                   = (Long)sourceAsMap.get("published_date");
+            Map<String, Object> sourceAsMap 	= hit.getSourceAsMap();
+            String id                       	= (String)sourceAsMap.get("id");
+            Float score                     	= hit.getScore();
+            String title                   	= (String)sourceAsMap.get("title");
+            String author                   	= (String)sourceAsMap.get("author");
+            long pub_date                   	= (Long)sourceAsMap.get("published_date");
             //erstelle für jede Ergebnis ein Objekt
-            result att                      = new result(id, score, title, author, pub_date);
-			//list enthält Artikel mit gleichen title, author, und published_date?
-			if (results.contains(att)) {
-				int index               = results.indexOf(att);
+            result att                      	= new result(id, score, title, author, pub_date);
+			if (results.contains(att)) {			//list enthält Artikel mit gleichen title, author, und published_date?
+				int index               		= results.indexOf(att);
 				if (results.get(index).getScore() < att.getScore()) {
-					//ersetzen der alte Eintrag mit der neue (höheren score)
-					results.set(index, att);
+					results.set(index, att);		//ersetzen der alte Eintrag mit der neue (höheren score)
 				}
 			} else {
 				results.add(att);
@@ -210,16 +207,16 @@ public class util {
         }
         //Collections.sort(results, new sortScore());
         for (result r : results) {
-			/*Long date = (origPubDate -r.getPublished_date());
-			Double betrag = -ALPHA * Math.abs(date);
-			Double power =  Math.pow(Math.E, betrag);
-			Double finalScore = r.getScore() * power;
-            arrayList.add(new String[]{r.getId(), finalScore.toString()});*/
-			arrayList.add(new String[]{r.getId(), r.getScore().toString()});
+			Long date 			= (origPubDate - r.getPublished_date());
+			Double betrag 		= -ALPHA * Math.abs(date);
+			Double power 		= Math.pow(Math.E, betrag);
+			Double finalScore 	= r.getScore() * power;
+			arrayList.add(new String[]{r.getId(), finalScore.toString()});
+			//arrayList.add(new String[]{r.getId(), r.getScore().toString()});		//delete this??
             //System.out.println(r.getTitle());      //for testing
         }
         //System.out.println("\n--------------------------\n\n");
-		Collections.sort(arrayList, new sortScore());
+		Collections.sort(arrayList, Collections.reverseOrder(new SortScore()));		//nach score absteigend sortieren
         return arrayList;
     }
 }
@@ -234,12 +231,14 @@ class result
     private String title;
     private String author;
     private long published_date;
+    private static final String DEFAULTTITLE = "no title";
+    private static final String DEFAULTAUTHOR = "no author";
 
     result(String id, Float score, String title, String author, long published_date) {
         this.id = id;
         this.score = score;
-        this.title = title;
-        this.author = author;
+        this.title = title == null ? DEFAULTTITLE : title;
+        this.author = author == null ? DEFAULTAUTHOR : author;
         this.published_date = published_date;
     }
 
@@ -263,13 +262,12 @@ class result
     }
 }
 
-class sortScore implements Comparator<String[]>
+/**
+ * Hilfsklasse, sortiert Suchergebnis nach score
+ */
+class SortScore implements Comparator<String[]>
 {
 	public int compare(String[] a, String[] b) {
-		if (Float.parseFloat(a[1]) > Float.parseFloat(b[1]))
-			return -1;
-		if (Float.parseFloat(a[1]) == Float.parseFloat(b[1]))
-			return 0;
-		return 1;
+		return Float.compare(Float.parseFloat(a[1]), Float.parseFloat(b[1]));
 	}
 }
