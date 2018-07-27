@@ -16,10 +16,17 @@ public class TestGesamt {
         //String WAPOId ="09c0bf80-7e9e-11e6-8d0c-fb6c00c90481";
 
         //
-        String WAPOId = "9171debc316e5e2782e0d2404ca7d09d";
+        //String WAPOId = "9171debc316e5e2782e0d2404ca7d09d";
 
         //Geht jetzt
         //String WAPOId = "6b1408fea9f9587fd63b350efeb38fb6";
+
+
+        //TODO: wirft bei Docfreq UND coreNLP eine ArrayIndexOutOfBoundsExeption, am Anfang fehlte die "3" !!!
+        //String WAPOId = "37a8e2283e4677b703f6464d0191a700";
+
+        //TODO: findet KEINE ERGEBNISSE - NUR bei coreNLP !!!!!!!
+          String WAPOId = "6fdc62d37aaf685b809c501abe13c56c";
 
 
 
@@ -29,14 +36,14 @@ public class TestGesamt {
 
         //--------------------------Test SUCHE MIT DocFreq--------------------------
 
-        System.out.println("---------------TEST MIT DOC FREQ---------------");
-        SearchWithDocFreq searchWithDocFreq = new SearchWithDocFreq();
-        ArrayList<String[]> arrayList;
-        arrayList = searchWithDocFreq.search(WAPOId);
-
-        System.out.println("Gefundene Artikel:");
-        for(String[] arr : arrayList)
-            System.out.println("id: " + arr[0] + "\tscore :" + arr[1]);
+//        System.out.println("---------------TEST MIT DOC FREQ---------------");
+//        SearchWithDocFreq searchWithDocFreq = new SearchWithDocFreq();
+//        ArrayList<String[]> arrayList;
+//        arrayList = searchWithDocFreq.search(WAPOId);
+//
+//        System.out.println("Gefundene Artikel:");
+//        for(String[] arr : arrayList)
+//            System.out.println("id: " + arr[0] + "\tscore :" + arr[1]);
 
 
 

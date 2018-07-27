@@ -41,6 +41,12 @@ public class Main {
             HashMap<Integer, String> mapMitDatenAusTopicDatei = readfromXML(topic.toString());
             Set<Integer>             alleTopicIDs             = mapMitDatenAusTopicDatei.keySet();
 
+            System.out.println(mapMitDatenAusTopicDatei.values().size()); //später entfernen
+            System.out.println(alleTopicIDs.size()); //später entfernen
+            System.out.println(alleTopicIDs);
+            System.out.println(mapMitDatenAusTopicDatei);
+
+
             OutputWriter outputWriterDocFreq = new OutputWriter(RUNTAG_DOCFREQ);
             OutputWriter outputWriterCoreNLP = new OutputWriter(RUNTAG_CORENLP);
 
@@ -49,11 +55,11 @@ public class Main {
 
                 if(stringIstNichtLeer(wapoArtikelID)){
 
-                    fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
-                    fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
+                  fuelleOutputWriterMitDocFreqAnfrage(wapoArtikelID, topicID, outputWriterDocFreq);
+                    // fuelleOutputWriterMitCoreNLPAnfrage(wapoArtikelID, topicID, outputWriterCoreNLP);
                 }
             }
-            //TODO: dieser Teil hier sollte lesbarer gemacht werden
+
             outputWriterDocFreq.printToSTDOUT();
             outputWriterDocFreq.writeToFile(ERGEBNIS_VERZEICHNIS_DOCFREQ +"DocFreq_" + erzeugeDateiName(topic.getName()));
             outputWriterDocFreq.reset();
@@ -77,7 +83,12 @@ public class Main {
         SearchWithDocFreq searchWithDocFreq;
         ArrayList<String[]> ergebnisListe;
         searchWithDocFreq = new SearchWithDocFreq();
+
+        System.out.println("DOCFREQ ZU SUCHENDER ARTIKEL: " + zuSuchenderArtikel);
+
         ergebnisListe = searchWithDocFreq.search(zuSuchenderArtikel);
+
+        System.out.println("DOCFREQ ERGEBNISLISTE: " + ergebnisListe);
 
         //(ergebnisListe.get(0)[0]) -> artikelID als string
         //(ergebnisListe.get(0)[1]) -> score als string
@@ -108,10 +119,14 @@ public class Main {
         ArrayList<String[]> ergebnisListe;
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
         //searchWithCoreNLP.startClient();
-
+        System.out.println(zuSuchenderArtikel);
         ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
+        System.out.println("DAS IST DIE CORENLP-ERGEBNISLISTE: " + ergebnisListe);
+        System.out.println(ergebnisListe); // TODO: HIER LIEGT DER FEHLER !!!!!!!!!!!!!!!!
+
 
         Output[] outputArray = new Output[ergebnisListe.size()];
+
 
         for(int i = 0; i < ergebnisListe.size(); i++){
             String[] artikelIDUndScore = ergebnisListe.get(i);
