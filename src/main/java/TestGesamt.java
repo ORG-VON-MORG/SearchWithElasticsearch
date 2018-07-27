@@ -10,8 +10,18 @@ public class TestGesamt {
     public static void main (String[] args){
         //Input Artikel
         //WAPOId ist die ID der Washington Post
-        String WAPOId ="3902c9005a0563742fc4acb2c011b164";
+        //String WAPOId ="3902c9005a0563742fc4acb2c011b164";
+
+        //Dieser Artikel funktioniert
         //String WAPOId ="09c0bf80-7e9e-11e6-8d0c-fb6c00c90481";
+
+        //
+        String WAPOId = "9171debc316e5e2782e0d2404ca7d09d";
+
+        //Geht jetzt
+        //String WAPOId = "6b1408fea9f9587fd63b350efeb38fb6";
+
+
 
         System.out.println("Der Basis Artikel hat die ID: "+ WAPOId );
 
