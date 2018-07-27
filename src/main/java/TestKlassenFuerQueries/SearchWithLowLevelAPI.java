@@ -139,14 +139,29 @@ public class SearchWithLowLevelAPI {
        HashMap<String, int[]> wordFreq  = new HashMap<String, int[]>();
        String elasticId                 = getElasticIdFromArtikelId(artikelId);
        List<String> paragraph           = getCleanContentString(elasticId);
-
+       //Liste enthält keine Strings mit "-Zeichen und keine leere Strings
+       List<String> paragraphBereinigt  = new ArrayList<String>();
        String endpoint                  = indexName + "/_doc/_termvector";
        Map<String, String> params       = Collections.emptyMap();
        startClient();
 
        //iterate over all content.contentString field
        //this for loop will create artificial document for every content.contentString field, and count the statistics
-       for(String sentences : paragraph) {
+
+       //for Schleife entfernt "-Zeichen und entfernt leere Strings
+       for (String sentences : paragraph) {
+           sentences = sentences.replaceAll("\"","").trim();
+
+           if (!(sentences.isEmpty())){
+               paragraphBereinigt.add(sentences);
+           }
+
+
+       }
+
+
+       for(String sentences : paragraphBereinigt) {
+
            String json                  = "{\"doc\":{" +
                                                     "\"id\":\"test\"," +
                                                     "\"article_url\":\"www.test.com\"," +
@@ -163,6 +178,8 @@ public class SearchWithLowLevelAPI {
                                                 "\"offsets\":false" +
                                             "}";
            HttpEntity entity            = new NStringEntity(json, APPLICATION_JSON);
+
+           System.out.println(json);
 
            try {
                Response response        = restClient.performRequest("GET", endpoint, params, entity);
