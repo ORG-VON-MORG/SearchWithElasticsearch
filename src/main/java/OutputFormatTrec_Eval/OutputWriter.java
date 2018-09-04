@@ -19,8 +19,6 @@ import java.io.*;
 
 public class OutputWriter {
 
-    //private static final String RUNTYPE = "htwsaar";
-
     private StringBuilder outputBuilder;
     private String runtag;
 
@@ -43,7 +41,6 @@ public class OutputWriter {
      * @param outputArray Array mit "Output"-Objekten - die "Output"-Objekte beinhalten die Ergebnisse vom Information-Retrieval System für EIN Topic
      */
     public void receive(Output[] outputArray){
-    //TODO: überprüfe, ob alle topic-IDS des "Output"-Objekts gleich sind -> wirf Exception, wenn nicht
         int topicID = outputArray[0].getTopicID();
 
         for(int i = 0; i < outputArray.length; i++) {

@@ -12,11 +12,7 @@ public class CoreNLPBeispiel {
     public static void main(String[] args) {
         // Create a document. No computation is done yet.
 
-        String zeitungstext = "Kate Spade’s husband, Andy, said Wednesday that the fashion designer was being treated for " +
-                "depression and anxiety in the years leading up to her death by apparent suicide this week. " +
-                "“Kate suffered from depression and anxiety for many years,” Andy Spade said in a statement that was " +
-                "published in full by the New York Times. “She was actively seeking help and working closely with her " +
-                "doctors to treat her disease, one that takes far too many lives.”";
+        String zeitungstext = "What could possibly go wrong when Trump goes to Texas?";
 
         Document doc = new Document(zeitungstext);
 

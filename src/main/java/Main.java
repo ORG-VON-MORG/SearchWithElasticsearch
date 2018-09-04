@@ -20,12 +20,11 @@ public class Main {
 
 
     private static final String TOPIC_VERZEICHNIS    = ".\\src\\main\\resources\\TREC-TOPICS";
-    private static final String ERGEBNIS_VERZEICHNIS = ".\\src\\main\\resources\\Anfrageergebnisse";
     private static final String ERGEBNIS_VERZEICHNIS_DOCFREQ = ".\\src\\main\\resources\\Anfrageergebnisse\\DocFreq\\";
     private static final String ERGEBNIS_VERZEICHNIS_CORENLP = ".\\src\\main\\resources\\Anfrageergebnisse\\CoreNLP\\";
 
-    private static final String RUNTAG_DOCFREQ = "htwsaar";
-    private static final String RUNTAG_CORENLP = "htwsaar";
+    private static final String RUNTAG_DOCFREQ = "htwsaar01";
+    private static final String RUNTAG_CORENLP = "htwsaar02";
 
 
     /**
@@ -42,8 +41,7 @@ public class Main {
             HashMap<Integer, String> mapMitDatenAusTopicDatei = util.readfromXML(topic.toString());
             Set<Integer>             alleTopicIDs             = mapMitDatenAusTopicDatei.keySet();
 
-            System.out.println(mapMitDatenAusTopicDatei.values().size()); //später entfernen
-            System.out.println(alleTopicIDs.size()); //später entfernen
+            System.out.println("ANZAHL TOPICS: " + (alleTopicIDs.size()-1));
             System.out.println(alleTopicIDs);
             System.out.println(mapMitDatenAusTopicDatei);
 
@@ -81,18 +79,14 @@ public class Main {
      * @param topicID TopicID von TREC
      */
     private void fuelleOutputWriterMitDocFreqAnfrage(String zuSuchenderArtikel, int topicID, OutputWriter outputWriter) {
-        SearchWithDocFreq searchWithDocFreq;
+        SearchWithDocFreq searchWithDocFreq = new SearchWithDocFreq();
         ArrayList<String[]> ergebnisListe;
-        searchWithDocFreq = new SearchWithDocFreq();
 
         System.out.println("DOCFREQ ZU SUCHENDER ARTIKEL: " + zuSuchenderArtikel);
 
         ergebnisListe = searchWithDocFreq.search(zuSuchenderArtikel);
 
         System.out.println("DOCFREQ ERGEBNISLISTE: " + ergebnisListe);
-
-        //(ergebnisListe.get(0)[0]) -> artikelID als string
-        //(ergebnisListe.get(0)[1]) -> score als string
 
         Output[] outputArray = new Output[ergebnisListe.size()];
 
@@ -116,18 +110,16 @@ public class Main {
      * @param topicID TopicID von TREC
      */
     private void fuelleOutputWriterMitCoreNLPAnfrage(String zuSuchenderArtikel, int topicID, OutputWriter outputWriter) {
-
-        ArrayList<String[]> ergebnisListe;
         SearchWithCoreNLP searchWithCoreNLP = new SearchWithCoreNLP();
-        //searchWithCoreNLP.startClient();
-        System.out.println(zuSuchenderArtikel);
-        ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
-        System.out.println("DAS IST DIE CORENLP-ERGEBNISLISTE: " + ergebnisListe);
-        System.out.println(ergebnisListe); // TODO: HIER LIEGT DER FEHLER !!!!!!!!!!!!!!!!
+        ArrayList<String[]> ergebnisListe;
 
+        System.out.println("CORENLP ZU SUCHENDER ARTIKEL: " + zuSuchenderArtikel);
+
+        ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
+
+        System.out.println("CORENLP ERGEBNISLISTE: " + ergebnisListe);
 
         Output[] outputArray = new Output[ergebnisListe.size()];
-
 
         for(int i = 0; i < ergebnisListe.size(); i++){
             String[] artikelIDUndScore = ergebnisListe.get(i);

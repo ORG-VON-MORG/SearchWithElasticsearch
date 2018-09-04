@@ -44,7 +44,6 @@ public class SearchWithCoreNLP {
             for (CoreMap entityMention : sentence.get(CoreAnnotations.MentionsAnnotation.class)) {
                 String m = entityMention.get(CoreAnnotations.TextAnnotation.class);
                 titleEntities += m + " ";
-                //System.out.println( m + ", ");      //delete this later, only for testing
             }
         }
         //System.out.println(titleEntities);
