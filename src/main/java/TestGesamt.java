@@ -36,14 +36,14 @@ public class TestGesamt {
 
         //--------------------------Test SUCHE MIT DocFreq--------------------------
 
-//        System.out.println("---------------TEST MIT DOC FREQ---------------");
-//        SearchWithDocFreq searchWithDocFreq = new SearchWithDocFreq();
-//        ArrayList<String[]> arrayList;
-//        arrayList = searchWithDocFreq.search(WAPOId);
-//
-//        System.out.println("Gefundene Artikel:");
-//        for(String[] arr : arrayList)
-//            System.out.println("id: " + arr[0] + "\tscore :" + arr[1]);
+        System.out.println("---------------TEST MIT DOC FREQ---------------");
+        SearchWithDocFreq searchWithDocFreq = new SearchWithDocFreq();
+        ArrayList<String[]> arrayList;
+        arrayList = searchWithDocFreq.search(WAPOId);
+
+        System.out.println("Gefundene Artikel:");
+        for(String[] arr : arrayList)
+            System.out.println("id: " + arr[0] + "\tscore :" + arr[1]);
 
 
 

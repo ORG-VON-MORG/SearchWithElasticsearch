@@ -86,7 +86,7 @@ public class Main {
 
         ergebnisListe = searchWithDocFreq.search(zuSuchenderArtikel);
 
-        System.out.println("DOCFREQ ERGEBNISLISTE: " + ergebnisListe);
+        //System.out.println("DOCFREQ ERGEBNISLISTE: " + ergebnisListe);
 
         Output[] outputArray = new Output[ergebnisListe.size()];
 
@@ -117,7 +117,7 @@ public class Main {
 
         ergebnisListe = searchWithCoreNLP.search(zuSuchenderArtikel);
 
-        System.out.println("CORENLP ERGEBNISLISTE: " + ergebnisListe);
+        //System.out.println("CORENLP ERGEBNISLISTE: " + ergebnisListe);
 
         Output[] outputArray = new Output[ergebnisListe.size()];
 
@@ -131,7 +131,7 @@ public class Main {
 
         outputWriter.receive(outputArray);
     }
-
+    
     /**
      * Prüft, ob ein übergebener String nicht leer ist.
      *
